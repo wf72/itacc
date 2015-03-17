@@ -138,14 +138,6 @@ def editpost(request):
     selected_contact.save()
     return HttpResponseRedirect(reverse('addressbook:index' ))
 
-
-# def results(request, question_id):
-#     response = "You're looking at the results of question %s."
-#     return HttpResponse(response % question_id)
-#
-# def vote(request, question_id):
-#     return HttpResponse("You're voting on question %s." % question_id)
-
 @user_passes_test(user_can_edit, login_url="/login/")
 def ldap_sync(request):
     """Синхронизация с Active Directory"""
