@@ -34,6 +34,6 @@ class Ldap_settings(models.Model):
 
     def save(self, *args, **kwargs):
         if self.active==True:
-           raise  NameError('Only one active settings') # нужно исправить не предупреждение, пока не знаю как
+           raise  NameError('Only one active settings') # нужно исправить на предупреждение, пока не знаю как
         else:
            super(Ldap_settings, self).save(*args, **kwargs)
