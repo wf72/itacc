@@ -1,10 +1,7 @@
+# coding=utf-8
 from django.db import models
-#from django import forms
-from datetime import date
 
-
-
-# Create your models here.
+#Контакты
 class Contact(models.Model):
     login = models.CharField(max_length=30,unique=True)
     lastname = models.CharField(max_length=200)
@@ -24,14 +21,7 @@ class Contact(models.Model):
     def __unicode__(self):
         return self.lastname+' '+self.firstname+' '+self.fathername
 
-    #def reminder(self):
-        #if self.birthday:
-            #if
-
-#class Choice(models.Model):
- #   question = models.ForeignKey(Question)
- #  choice_text = models.CharField(max_length=200)
- #   votes = models.IntegerField(default=0)
+#Настройки LDAP для синхронизации с AD
 class Ldap_settings(models.Model):
     ldap_user = models.CharField(max_length=200)
     ldap_password = models.CharField(max_length=200)
@@ -44,6 +34,6 @@ class Ldap_settings(models.Model):
 
     def save(self, *args, **kwargs):
         if self.active==True:
-           raise  NameError('Only one active settings')
+           raise  NameError('Only one active settings') # нужно исправить не предупреждение, пока не знаю как
         else:
            super(Ldap_settings, self).save(*args, **kwargs)
