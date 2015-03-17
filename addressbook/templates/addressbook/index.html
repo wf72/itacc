@@ -54,6 +54,9 @@
                         {% if contact.phone %}
                             {{ contact.phone }}
                         {% endif %}
+                        {% if contact.phone and contact.cellphone %}
+                            ,
+                        {% endif %}
                         {% if contact.cellphone %}
                             {{ contact.cellphone }}
                         {% endif %}
@@ -69,17 +72,19 @@
         {% endfor %}
 
         </table>
-        {% if can_edit %}
-    <table border="0" align="center" cellspacing="5">
-        <tr>
-            <td><a href="{% url 'addressbook:add' %}">Добавить</a> </td>
-        </tr>
-    </table>
-        {% endif %}
+
 
 {% else %}
     <div><p>Адресная книга пуста.</p></div>
 {% endif %}
+        {% if can_edit %}
+            <table border="0" align="center" cellspacing="10">
+                <tr>
+                    <td><a href="{% url 'addressbook:add' %}">Добавить</a> </td>
+                    <td><a href="{% url 'addressbook:sync_ldap' %}">Синхронизировать</a> </td>
+                </tr>
 
+            </table>
+        {% endif %}
 
 {% endblock content %}

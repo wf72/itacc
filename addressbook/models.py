@@ -23,17 +23,19 @@ class Contact(models.Model):
 
 #Настройки LDAP для синхронизации с AD
 class Ldap_settings(models.Model):
-    ldap_user = models.CharField(max_length=200)
-    ldap_password = models.CharField(max_length=200)
-    ldap_server = models.CharField(max_length=200,unique=True)
-    ldap_base = models.CharField(max_length=200)
+    ldap_user = models.CharField(max_length=200) #в виде user@domen.local
+    ldap_password = models.CharField(max_length=200) #пароль от домена
+    ldap_server = models.CharField(max_length=200,unique=True) #в виде ldap://IP_or_Name
+    ldap_base = models.CharField(max_length=200) # в виде dc=example, dc=local
     active = models.BooleanField(default='False',unique=False)
 
     def __unicode__(self):
         return self.ldap_server+' '+self.ldap_user
 
-    def save(self, *args, **kwargs):
-        if self.active==True:
-           raise  NameError('Only one active settings') # нужно исправить на предупреждение, пока не знаю как
-        else:
-           super(Ldap_settings, self).save(*args, **kwargs)
+# нужно исправить на предупреждение, при двух одинаковых настройках, ну либо изменить тип хранения настроек
+#    def save(self, *args, **kwargs):
+#        if self.active==True:
+#
+#            raise  NameError('Only one active settings')
+#        else:
+#           super(Ldap_settings, self).save(*args, **kwargs)

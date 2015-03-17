@@ -36,10 +36,11 @@ def user_can_edit(user):
 
 def search_contact(search_string):
     """
-    Поиск контактов
+    Поиск контактов, почему-то ищет только с учетом регистра, нужно исправить
     :param search_string:
     :return:
     """
+    #search_string=search_string.lower()
     return Contact.objects.filter(Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string) )
 
 
@@ -198,10 +199,48 @@ def ldap_sync(request):
 
                 Llastname = Llastname if Llastname else Llastname2
                 Lfirstname = Lfirstname if Lfirstname else Lfirstname2
-            new_contact = Contact.objects.filter(login=Llogin)
+            try:
+                new_contact = Contact.objects.get(login=Llogin)
+            except:
+                new_contact=""
             if not new_contact:
                 new_contact = Contact.objects.create(login=Llogin,lastname=Llastname,firstname=Lfirstname,fathername=Lfathername,company=Lcompany,position=Lposition,department=Ldepartment,phone=Lphone,cellphone=Lcellphone,address=Laddress,email=Lemail,active=True)
                 new_contact.save()
+            else:
+                changed=False
+                if new_contact.lastname<>Llastname:
+                    new_contact.lastname=Llastname
+                    changed=True
+                if new_contact.firstname<>Lfirstname:
+                    new_contact.firstname=Lfirstname
+                    changed=True
+                if new_contact.fathername<>Lfathername:
+                    new_contact.fathername=Lfathername
+                    changed=True
+                if new_contact.company<>Lcompany:
+                    new_contact.company=Lcompany
+                    changed=True
+                if new_contact.position<>Lposition:
+                    new_contact.position=Lposition
+                    changed=True
+                if new_contact.department<>Ldepartment:
+                    new_contact.department=Ldepartment
+                    changed=True
+                if new_contact.phone<>Lphone:
+                    new_contact.phone=Lphone
+                    changed=True
+                if new_contact.cellphone<>Lcellphone:
+                    new_contact.cellphone=Lcellphone
+                    changed=True
+                if new_contact.address<>Laddress:
+                    new_contact.address=Laddress
+                    changed=True
+                if new_contact.email<>Lemail:
+                    new_contact.email=Lemail
+                    changed=True
+                if changed:
+                    new_contact.save()
+
     finally:
         l.unbind()
     return HttpResponseRedirect(reverse('addressbook:index' ))
