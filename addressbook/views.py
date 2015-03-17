@@ -9,6 +9,11 @@ from datetime import datetime
 import ldap
 
 def ldap_settings(item):
+    """
+    Получение настроек ldap
+    :param item:
+    :return:
+    """
     settings = Ldap_settings.objects.get(active=True)
     if settings:
         if item == 'ldap_user':
@@ -21,13 +26,28 @@ def ldap_settings(item):
             return settings.ldap_server
 
 def user_can_edit(user):
+    """
+    Проверка на возможность редактирования
+    :param user:
+    :return:
+    """
     return user.is_authenticated() and user.has_perm("addressbook.Contact")
 
 def search_contact(search_string):
+    """
+    Поиск контактов
+    :param search_string:
+    :return:
+    """
     return Contact.objects.filter(Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string) )
 
 
 def index(request):
+    """
+    Список контактов
+    :param request:
+    :return:
+    """
     user = request.user
     if request.POST:
         search_string=request.POST['search_string']
@@ -42,26 +62,53 @@ def index(request):
     return render(request,'addressbook/index.html',context)
 
 def detail(request,contact_id):
+    """
+    Просмотр контакта
+    :param request:
+    :param contact_id:
+    :return:
+    """
     contact = get_object_or_404(Contact, pk=contact_id)
     return render(request,'addressbook/detail.html',{'contact':contact})
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def edit(request,contact_id):
+    """
+    Открытие формы редактирования контакта
+    :param request:
+    :param contact_id:
+    :return:
+    """
     contact = get_object_or_404(Contact, pk=contact_id)
     return render(request,'addressbook/edit.html',{'contact':contact})
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def delete(request,contact_id):
+    """
+    Удаление контакта
+    :param request:
+    :param contact_id:
+    :return:
+    """
     contact = get_object_or_404(Contact, pk=contact_id)
     contact.delete()
     return HttpResponseRedirect(reverse('addressbook:index' ))
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def add(request):
+    """
+    Добавление нового контакта
+    :param request:
+    :return:
+    """
     return render(request,'addressbook/edit.html')
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def editpost(request):
+    """ Отправляет изменения контакта в базу
+    :param request:
+    :return:
+    """
     contact_id=request.POST['id']
     if contact_id <> "add_contact":
         selected_contact = get_object_or_404(Contact, pk=contact_id)
@@ -101,6 +148,7 @@ def editpost(request):
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def ldap_sync(request):
+    """Синхронизация с Active Directory"""
     l = ldap.initialize("ldap://192.168.1.5")
     try:
         l.protocol_version = ldap.VERSION3
