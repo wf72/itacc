@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head lang="ru">
+    <style type="text/css">
+           .center {
+  top: 50%; /* Отступ в процентах от верхнего края окна */
+  left: 50%; /* Отступ в процентах от левого края окна */
+  width: 500px; /* Ширина блока */
+  height: 450px; /* Высота блока */
+  position: absolute; /* Абсолютное позиционирование блока */
+  margin-top: -225px; /* Отрицательный отступ от верхнего края страницы, должен равняться половине высоты блока со знаком минус */
+  margin-left: -225px; /* Отрицательный отступ от левого края страницы, должен равняться половине высоты блока со знаком минус */
+}
+    </style>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+{% block auth %}
+<div align="left">
+    {% if user.is_authenticated %}
+        Добрый день, {{ user.username }}!
+        <a href="{% url 'addressbook:logout' %}?next={% url 'addressbook:index' %}">logout</a>
+    {% else %}
+    {% if form.errors %}
+        <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+    {% endif %}
+        Добрый день, пожалуйста авторизуйтесь.
+        <a href="{% url 'addressbook:login' %}?next={% url 'addressbook:index' %}">login</a>
+    {% endif %}
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    Добро пожаловать на сайте.
+{% endblock content %}
+
+</body>
+</html>

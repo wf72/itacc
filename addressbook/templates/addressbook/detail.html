@@ -1,0 +1,94 @@
+{% extends "addressbook/base.html" %}
+
+{% block content %}
+
+{% if contact %}
+<table align="center" border="0">
+    <tr>
+        <td align="right">
+            <b>ФИО:</b>
+        </td>
+        <td>
+            {{ contact.lastname }} {{ contact.firstname }} {{ contact.fathername}}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            <b>Организация:</b>
+        </td>
+        <td>
+            {{ contact.company }}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            <b>Отдел:</b>
+        </td>
+        <td>
+            {{ contact.department }}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+        <b>Должность:</b>
+        </td>
+        <td>
+            {{ contact.position }}</p>
+
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            <b>Email:</b>
+        </td>
+        <td>
+            <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            <b>Телефон:</b>
+        </td>
+        <td>
+            {{ contact.phone }}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            <b>Сотовый телефон:</b>
+        </td>
+        <td>
+            {{ contact.cellphone }}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+        <b>Адрес:</b>
+        </td>
+        <td>
+            {{ contact.address }}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+        <b>День рождения:</b>
+        </td>
+        <td>
+            {% if contact.birthday %}
+            {{ contact.birthday }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            {% if allowedit %}
+                <a href="{% url 'addressbook:edit' contact.id %}"> Редактировать </a>
+            {% endif %}
+        </td>
+        <td align="right">
+            <a href=" {% url 'addressbook:index' %} ">Назад</a>
+            </td>
+        </tr>
+</table>
+{% endif %}
+{% endblock content %}
