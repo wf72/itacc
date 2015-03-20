@@ -36,12 +36,12 @@ def user_can_edit(user):
 
 def search_contact(search_string):
     """
-    Поиск контактов, почему-то ищет только с учетом регистра, нужно исправить
+    Поиск контактов. С sqlite не работает поиск без учета регистра. Ссылка на документацию: https://docs.djangoproject.com/en/dev/ref/databases/#sqlite-string-matching
     :param search_string:
     :return:
     """
     #search_string=search_string.lower()
-    return Contact.objects.filter(Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string) )
+    return Contact.objects.filter( Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string) )
 
 
 def index(request):
