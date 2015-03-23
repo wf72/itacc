@@ -40,7 +40,6 @@ def search_contact(search_string):
     :param search_string:
     :return:
     """
-    #search_string=search_string.lower()
     return Contact.objects.filter( Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string) )
 
 
