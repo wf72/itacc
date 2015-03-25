@@ -4,27 +4,21 @@ from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import user_passes_test
 from addressbook.models import Contact
-from addressbook.models import Ldap_settings
+from addressbook.models import Settings
 from django.db.models import Q
 from datetime import datetime
 import ldap
 
-def ldap_settings(item):
+def settings(item):
     """
-    Получение настроек ldap
+    Получение настроек
     :param item:
     :return:
     """
-    settings = Ldap_settings.objects.get(active=True)
-    if settings:
-        if item == 'ldap_user':
-            return settings.ldap_user
-        elif item == 'ldap_password':
-            return settings.ldap_password
-        elif item == 'ldap_base':
-            return settings.ldap_base
-        elif item == 'ldap_server':
-            return settings.ldap_server
+    if item:
+        value=Settings.objects.get(key=item).value
+        if value:
+            return value
 
 def user_can_edit(user):
     """
@@ -142,12 +136,12 @@ def editpost(request):
 @user_passes_test(user_can_edit, login_url="/login/")
 def ldap_sync(request):
     """Синхронизация с Active Directory"""
-    l = ldap.initialize("ldap://192.168.1.5")
+    l = ldap.initialize(settings("ldap_server"))
     try:
         l.protocol_version = ldap.VERSION3
         l.set_option(ldap.OPT_REFERRALS, 0)
-        bind = l.simple_bind_s(ldap_settings('ldap_user'), ldap_settings('ldap_password'))
-        base = ldap_settings('ldap_base')
+        bind = l.simple_bind_s(settings('ldap_user'), settings('ldap_password'))
+        base = settings('ldap_base')
         #criteria = "(&(objectClass=user)(sAMAccountName=username))"
         criteria = "(&(mail=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(objectClass=user))"
         attributes = ['sn','givenName', 'mail','telephoneNumber', 'mobile', 'l', 'streetAddress','department','company','displayName','sAMAccountName',]
