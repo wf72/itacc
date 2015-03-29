@@ -1,25 +1,25 @@
-
 {% extends "addressbook/base.html" %}
 {% block auth %}
 {% endblock auth %}
 {% block content %}
 
-  {% if form.errors %}
-    <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
-  {% endif %}
+{% if form.errors %}
+<p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+{% endif %}
 <div class="center">
-  <form action='.' method='post'>
-      {% csrf_token %}
-    <label for="username">Логин:</label>
-    <input type="text" name="username" value="" id="username">
-    <label for="password">Пароль:</label>
-    <input type="password" name="password" value="" id="password">
-    <p align="center">
-      <input type="submit" value="Войти" />
-      <input type="button" value="Назад" onclick="history.back()">
-    </p>
-    <input type="hidden" name="next" value="{{ next }}" />
-  </form>
+    <form action='.' method='post'>
+        {% csrf_token %}
+        <label for="username">Логин:</label>
+        <input type="text" name="username" value="" id="username">
+        <label for="password">Пароль:</label>
+        <input type="password" name="password" value="" id="password">
+
+        <p align="center">
+            <input type="submit" value="Войти"/>
+            <input type="button" value="Назад" onclick="history.back()">
+        </p>
+        <input type="hidden" name="next" value="{{ next }}"/>
+    </form>
 
 </div>
 {% endblock %}

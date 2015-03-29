@@ -30,7 +30,7 @@
     </tr>
     <tr>
         <td align="right">
-        <b>Должность:</b>
+            <b>Должность:</b>
         </td>
         <td>
             {{ contact.position }}</p>
@@ -63,7 +63,7 @@
     </tr>
     <tr>
         <td align="right">
-        <b>Адрес:</b>
+            <b>Адрес:</b>
         </td>
         <td>
             {{ contact.address }}
@@ -71,7 +71,7 @@
     </tr>
     <tr>
         <td align="right">
-        <b>День рождения:</b>
+            <b>День рождения:</b>
         </td>
         <td>
             {% if contact.birthday %}
@@ -82,13 +82,13 @@
     <tr>
         <td align="right">
             {% if allowedit %}
-                <a href="{% url 'addressbook:edit' contact.id %}"> Редактировать </a>
+            <a href="{% url 'addressbook:edit' contact.id %}"> Редактировать </a>
             {% endif %}
         </td>
         <td align="right">
             <a href=" {% url 'addressbook:index' %} ">Назад</a>
-            </td>
-        </tr>
+        </td>
+    </tr>
 </table>
 {% endif %}
 {% endblock content %}

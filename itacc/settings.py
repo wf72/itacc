@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
@@ -74,7 +75,7 @@ LANGUAGE_CODE = 'ru-RU'
 TIME_ZONE = 'Asia/Yekaterinburg'
 
 USE_I18N = True
-#DATE_FORMAT = "Y-m-d"
+# DATE_FORMAT = "Y-m-d"
 
 USE_L10N = True
 

@@ -7,16 +7,17 @@
 {% if error_message %}<p xmlns="http://www.w3.org/1999/html"><strong>{{ error_message }}</strong></p>{% endif %}
 
 <table align="center" border="0">
-<form action="{% url 'addressbook:editpost' %}" method="post">
-{% csrf_token %}
-    <input type="hidden" name="id" id="id" value="{{ contact.id }}">
+    <form action="{% url 'addressbook:editpost' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="id" id="id" value="{{ contact.id }}">
 
         <tr>
             <td align="right">
                 <b>Фамилия:</b>
             </td>
             <td>
-                <input type="text" name="lastname" id="lastname" value="{{ contact.lastname }}" maxlength= "{{ contact.lastname.max_length }}"/>
+                <input type="text" name="lastname" id="lastname" value="{{ contact.lastname }}"
+                       maxlength="{{ contact.lastname.max_length }}"/>
             </td>
         </tr>
         <tr>
@@ -53,7 +54,7 @@
         </tr>
         <tr>
             <td align="right">
-            <b>Должность:</b>
+                <b>Должность:</b>
             </td>
             <td>
                 <input type="text" name="position" id="position" value="{{ contact.position }}" maxlength=200/>
@@ -64,7 +65,8 @@
                 <b>Email:</b>
             </td>
             <td>
-                <input type="email" name="email" id="email" value="{{ contact.email }}" maxlength= "{{ contact.lastname.max_length }}"/>
+                <input type="email" name="email" id="email" value="{{ contact.email }}"
+                       maxlength="{{ contact.lastname.max_length }}"/>
             </td>
         </tr>
         <tr>
@@ -72,7 +74,8 @@
                 <b>Телефон:</b>
             </td>
             <td>
-                <input type="text" name="phone" id="phone" value="{{ contact.phone }}" maxlength= "{{ contact.lastname.max_length }}"/>
+                <input type="text" name="phone" id="phone" value="{{ contact.phone }}"
+                       maxlength="{{ contact.lastname.max_length }}"/>
             </td>
         </tr>
         <tr>
@@ -80,62 +83,65 @@
                 <b>Сотовый телефон:</b>
             </td>
             <td>
-                <input type="text" name="cellphone" id="cellphone" value="{{ contact.cellphone }}" maxlength= "{{ contact.lastname.max_length }}"/>
+                <input type="text" name="cellphone" id="cellphone" value="{{ contact.cellphone }}"
+                       maxlength="{{ contact.lastname.max_length }}"/>
             </td>
         </tr>
         <tr>
             <td align="right">
-            <b>Адрес:</b>
+                <b>Адрес:</b>
             </td>
             <td>
-                <input type="text" name="address" id="address" value="{{ contact.address }}" maxlength= "{{ contact.lastname.max_length }}"/>
+                <input type="text" name="address" id="address" value="{{ contact.address }}"
+                       maxlength="{{ contact.lastname.max_length }}"/>
             </td>
         </tr>
         <tr>
             <td align="right">
-            <b>День рождения:</b>
+                <b>День рождения:</b>
             </td>
             <td>
-                <input type="date" name="birthday" id="birthday" value="{{ contact.birthday|date:"Y-m-d" }}"/>
+                <input type="date" name="birthday" id="birthday" value="{{ contact.birthday|date:" Y-m-d" }}"/>
             </td>
         </tr>
         <tr>
             <td align="right">
-            <b>Активен:</b>
+                <b>Активен:</b>
             </td>
             <td>
-                <input type="checkbox" name="active" id="active" value="{{ contact.active }}" {% if contact.active %} checked {% endif %}/>
+                <input type="checkbox" name="active" id="active" value="{{ contact.active }}" {% if contact.active %}
+                       checked {% endif %}/>
             </td>
         </tr>
         <tr>
             <td align="right">
-            <input type="submit" value="Сохранить"/>
+                <input type="submit" value="Сохранить"/>
             </td>
             <td>
                 <input type="reset"/>
             </td>
 
-</form>
+    </form>
 
-<form action="{% url 'addressbook:delete' contact.id %}" method="post">
-{% csrf_token %}
-    <input type="hidden" name="id" id="id" value="{{ contact.id }}">
+    <form action="{% url 'addressbook:delete' contact.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="id" id="id" value="{{ contact.id }}">
 
-            <td align="right">
+        <td align="right">
             <input type="submit" value='Удалить'/>
-            </td>
-                <td align="right">
+        </td>
+        <td align="right">
             <input type="button" value="Назад" onclick="history.back()">
-            </td>
+        </td>
         </tr>
-    </table>
+</table>
 </form>
 {% else %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="{% url 'addressbook:editpost' %}" method="post">
-{% csrf_token %}
+    {% csrf_token %}
     <input type="hidden" name="id" id="id" value="add_contact">
     <table align="center" border="0">
         <tr>
@@ -143,7 +149,7 @@
                 <b>Фамилия:</b>
             </td>
             <td>
-                <input type="text" name="lastname" id="lastname" value="" maxlength= "200"/>
+                <input type="text" name="lastname" id="lastname" value="" maxlength="200"/>
             </td>
         </tr>
         <tr>
@@ -180,7 +186,7 @@
         </tr>
         <tr>
             <td align="right">
-            <b>Должность:</b>
+                <b>Должность:</b>
             </td>
             <td>
                 <input type="text" name="position" id="position" value="" maxlength=200/>
@@ -191,7 +197,7 @@
                 <b>Email:</b>
             </td>
             <td>
-                <input type="email" name="email" id="email" value="" maxlength= "200"/>
+                <input type="email" name="email" id="email" value="" maxlength="200"/>
             </td>
         </tr>
         <tr>
@@ -199,7 +205,7 @@
                 <b>Телефон:</b>
             </td>
             <td>
-                <input type="text" name="phone" id="phone" value="" maxlength= ""/>
+                <input type="text" name="phone" id="phone" value="" maxlength=""/>
             </td>
         </tr>
         <tr>
@@ -207,20 +213,20 @@
                 <b>Сотовый телефон:</b>
             </td>
             <td>
-                <input type="text" name="cellphone" id="cellphone" value="" maxlength= ""/>
+                <input type="text" name="cellphone" id="cellphone" value="" maxlength=""/>
             </td>
         </tr>
         <tr>
             <td align="right">
-            <b>Адрес:</b>
+                <b>Адрес:</b>
             </td>
             <td>
-                <input type="text" name="address" id="address" value="" maxlength= ""/>
+                <input type="text" name="address" id="address" value="" maxlength=""/>
             </td>
         </tr>
         <tr>
             <td align="right">
-            <b>День рождения:</b>
+                <b>День рождения:</b>
             </td>
             <td>
                 <input type="date" name="birthday" id="birthday" value=""/>
@@ -228,7 +234,7 @@
         </tr>
         <tr>
             <td align="right">
-            <b>Активен:</b>
+                <b>Активен:</b>
             </td>
             <td>
                 <input type="checkbox" name="active" id="active" value=""/>
@@ -236,13 +242,13 @@
         </tr>
         <tr>
             <td align="right">
-            <input type="submit"/>
+                <input type="submit"/>
             </td>
             <td>
                 <input type="reset"/>
             </td>
             <td align="right">
-            <input type="button" value="Назад" onclick="history.back()">
+                <input type="button" value="Назад" onclick="history.back()">
             </td>
         </tr>
     </table>

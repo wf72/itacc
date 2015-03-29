@@ -1,6 +1,6 @@
 # coding=utf-8
-from django.shortcuts import get_object_or_404,render
-from django.http import HttpResponseRedirect,HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import user_passes_test
 from addressbook.models import Contact
@@ -9,6 +9,7 @@ from django.db.models import Q
 from datetime import datetime
 import ldap
 
+
 def settings(item):
     """
     Получение настроек
@@ -16,9 +17,10 @@ def settings(item):
     :return:
     """
     if item:
-        value=Settings.objects.get(key=item).value
+        value = Settings.objects.get(key=item).value
         if value:
             return value
+
 
 def user_can_edit(user):
     """
@@ -28,13 +30,15 @@ def user_can_edit(user):
     """
     return user.is_authenticated() and user.has_perm("addressbook.Contact")
 
+
 def search_contact(search_string):
     """
     Поиск контактов. С sqlite не работает поиск без учета регистра. Ссылка на документацию: https://docs.djangoproject.com/en/dev/ref/databases/#sqlite-string-matching
     :param search_string:
     :return:
     """
-    return Contact.objects.filter( Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string) )
+    return Contact.objects.filter(Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(
+        fathername__icontains=search_string))
 
 
 def index(request):
@@ -45,18 +49,20 @@ def index(request):
     """
     user = request.user
     if request.POST:
-        search_string=request.POST['search_string']
+        search_string = request.POST['search_string']
     else:
         search_string = ""
     if search_string == "":
         contacts_list = Contact.objects.order_by('lastname')
     else:
-        contacts_list=search_contact(search_string).order_by('lastname')
+        contacts_list = search_contact(search_string).order_by('lastname')
 
-    context = {'contacts_list': contacts_list,'can_edit': user_can_edit(user),'search_string': search_string, 'current_day':datetime.now()}
-    return render(request,'addressbook/index.html',context)
+    context = {'contacts_list': contacts_list, 'can_edit': user_can_edit(user), 'search_string': search_string,
+               'current_day': datetime.now()}
+    return render(request, 'addressbook/index.html', context)
 
-def detail(request,contact_id):
+
+def detail(request, contact_id):
     """
     Просмотр контакта
     :param request:
@@ -64,10 +70,11 @@ def detail(request,contact_id):
     :return:
     """
     contact = get_object_or_404(Contact, pk=contact_id)
-    return render(request,'addressbook/detail.html',{'contact':contact})
+    return render(request, 'addressbook/detail.html', {'contact': contact})
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
-def edit(request,contact_id):
+def edit(request, contact_id):
     """
     Открытие формы редактирования контакта
     :param request:
@@ -75,10 +82,11 @@ def edit(request,contact_id):
     :return:
     """
     contact = get_object_or_404(Contact, pk=contact_id)
-    return render(request,'addressbook/edit.html',{'contact':contact})
+    return render(request, 'addressbook/edit.html', {'contact': contact})
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
-def delete(request,contact_id):
+def delete(request, contact_id):
     """
     Удаление контакта
     :param request:
@@ -87,7 +95,8 @@ def delete(request,contact_id):
     """
     contact = get_object_or_404(Contact, pk=contact_id)
     contact.delete()
-    return HttpResponseRedirect(reverse('addressbook:index' ))
+    return HttpResponseRedirect(reverse('addressbook:index'))
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def add(request):
@@ -96,7 +105,8 @@ def add(request):
     :param request:
     :return:
     """
-    return render(request,'addressbook/edit.html')
+    return render(request, 'addressbook/edit.html')
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def editpost(request):
@@ -104,12 +114,12 @@ def editpost(request):
     :param request:
     :return:
     """
-    contact_id=request.POST['id']
+    contact_id = request.POST['id']
     if contact_id <> "add_contact":
         selected_contact = get_object_or_404(Contact, pk=contact_id)
     else:
         selected_contact = Contact()
-        selected_contact.pk=None
+        selected_contact.pk = None
 
     selected_contact.lastname = request.POST['lastname']
     selected_contact.firstname = request.POST['firstname']
@@ -121,7 +131,7 @@ def editpost(request):
     selected_contact.cellphone = request.POST['cellphone']
     selected_contact.address = request.POST['address']
     selected_contact.email = request.POST['email']
-    #selected_contact.photo = request.POST['lastname']
+    # selected_contact.photo = request.POST['lastname']
     if request.POST['birthday']:
         date_object = datetime.strptime(request.POST['birthday'], '%Y-%m-%d')
         selected_contact.birthday = date_object
@@ -131,7 +141,8 @@ def editpost(request):
     except:
         selected_contact.active = 0
     selected_contact.save()
-    return HttpResponseRedirect(reverse('addressbook:index' ))
+    return HttpResponseRedirect(reverse('addressbook:index'))
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def ldap_sync(request):
@@ -142,27 +153,28 @@ def ldap_sync(request):
         l.set_option(ldap.OPT_REFERRALS, 0)
         bind = l.simple_bind_s(settings('ldap_user'), settings('ldap_password'))
         base = settings('ldap_base')
-        #criteria = "(&(objectClass=user)(sAMAccountName=username))"
+        # criteria = "(&(objectClass=user)(sAMAccountName=username))"
         criteria = "(&(mail=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(objectClass=user))"
-        attributes = ['sn','givenName', 'mail','telephoneNumber', 'mobile', 'l', 'streetAddress','department','company','displayName','sAMAccountName',]
+        attributes = ['sn', 'givenName', 'mail', 'telephoneNumber', 'mobile', 'l', 'streetAddress', 'department',
+                      'company', 'displayName', 'sAMAccountName', ]
         result = l.search_s(base, ldap.SCOPE_SUBTREE, criteria, attributes)
         results = [entry for dn, entry in result if isinstance(entry, dict)]
         for contact in results:
-            Llastname=''
-            Llastname2=''
-            Lfirstname=''
-            Lfirstname2=''
-            Lfathername=''
-            Lcompany=''
-            Lposition=''
-            Ldepartment=''
-            Lphone=''
-            Lcellphone=''
-            Laddress=''
-            Lemail=''
-            Llogin=''
+            Llastname = ''
+            Llastname2 = ''
+            Lfirstname = ''
+            Lfirstname2 = ''
+            Lfathername = ''
+            Lcompany = ''
+            Lposition = ''
+            Ldepartment = ''
+            Lphone = ''
+            Lcellphone = ''
+            Laddress = ''
+            Lemail = ''
+            Llogin = ''
             for key in contact.keys():
-                if key=='sn':
+                if key == 'sn':
                     Llastname2 = contact[key][0]
                 elif key == 'givenName':
                     Lfirstname2 = contact[key][0]
@@ -175,7 +187,7 @@ def ldap_sync(request):
                 elif key == 'l':
                     Laddress = contact[key][0]
                 elif key == 'streetAddress':
-                    Laddress =  Laddress + ", " + contact[key][0]
+                    Laddress = Laddress + ", " + contact[key][0]
                 elif key == 'department':
                     Ldepartment = contact[key][0]
                 elif key == 'company':
@@ -184,9 +196,9 @@ def ldap_sync(request):
                     Llogin = contact[key][0]
                 elif key == 'displayName':
                     if len(contact[key][0].split()) == 3:
-                        Llastname,Lfirstname,Lfathername = contact[key][0].split()
+                        Llastname, Lfirstname, Lfathername = contact[key][0].split()
                     elif len(contact[key][0].split()) == 2:
-                        Llastname,Lfirstname = contact[key][0].split()
+                        Llastname, Lfirstname = contact[key][0].split()
                     elif len(contact[key][0].split()) == 1:
                         Llastname = contact[key][0]
 
@@ -195,45 +207,48 @@ def ldap_sync(request):
             try:
                 new_contact = Contact.objects.get(login=Llogin)
             except:
-                new_contact=""
+                new_contact = ""
             if not new_contact:
-                new_contact = Contact.objects.create(login=Llogin,lastname=Llastname,firstname=Lfirstname,fathername=Lfathername,company=Lcompany,position=Lposition,department=Ldepartment,phone=Lphone,cellphone=Lcellphone,address=Laddress,email=Lemail,active=True)
+                new_contact = Contact.objects.create(login=Llogin, lastname=Llastname, firstname=Lfirstname,
+                                                     fathername=Lfathername, company=Lcompany, position=Lposition,
+                                                     department=Ldepartment, phone=Lphone, cellphone=Lcellphone,
+                                                     address=Laddress, email=Lemail, active=True)
                 new_contact.save()
             else:
-                changed=False
-                if new_contact.lastname<>Llastname:
-                    new_contact.lastname=Llastname
-                    changed=True
-                if new_contact.firstname<>Lfirstname:
-                    new_contact.firstname=Lfirstname
-                    changed=True
-                if new_contact.fathername<>Lfathername:
-                    new_contact.fathername=Lfathername
-                    changed=True
-                if new_contact.company<>Lcompany:
-                    new_contact.company=Lcompany
-                    changed=True
-                if new_contact.position<>Lposition:
-                    new_contact.position=Lposition
-                    changed=True
-                if new_contact.department<>Ldepartment:
-                    new_contact.department=Ldepartment
-                    changed=True
-                if new_contact.phone<>Lphone:
-                    new_contact.phone=Lphone
-                    changed=True
-                if new_contact.cellphone<>Lcellphone:
-                    new_contact.cellphone=Lcellphone
-                    changed=True
-                if new_contact.address<>Laddress:
-                    new_contact.address=Laddress
-                    changed=True
-                if new_contact.email<>Lemail:
-                    new_contact.email=Lemail
-                    changed=True
+                changed = False
+                if new_contact.lastname <> Llastname:
+                    new_contact.lastname = Llastname
+                    changed = True
+                if new_contact.firstname <> Lfirstname:
+                    new_contact.firstname = Lfirstname
+                    changed = True
+                if new_contact.fathername <> Lfathername:
+                    new_contact.fathername = Lfathername
+                    changed = True
+                if new_contact.company <> Lcompany:
+                    new_contact.company = Lcompany
+                    changed = True
+                if new_contact.position <> Lposition:
+                    new_contact.position = Lposition
+                    changed = True
+                if new_contact.department <> Ldepartment:
+                    new_contact.department = Ldepartment
+                    changed = True
+                if new_contact.phone <> Lphone:
+                    new_contact.phone = Lphone
+                    changed = True
+                if new_contact.cellphone <> Lcellphone:
+                    new_contact.cellphone = Lcellphone
+                    changed = True
+                if new_contact.address <> Laddress:
+                    new_contact.address = Laddress
+                    changed = True
+                if new_contact.email <> Lemail:
+                    new_contact.email = Lemail
+                    changed = True
                 if changed:
                     new_contact.save()
 
     finally:
         l.unbind()
-    return HttpResponseRedirect(reverse('addressbook:index' ))
+    return HttpResponseRedirect(reverse('addressbook:index'))
