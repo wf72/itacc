@@ -23,17 +23,6 @@ class Contact(models.Model):
     def __unicode__(self):
         return "%s %s %s" % (self.lastname, self.firstname, self.fathername)
 
-# #Настройки LDAP для синхронизации с AD
-# class Ldap_settings(models.Model):
-#     ldap_user = models.CharField(max_length=200) #в виде user@domen.local
-#     ldap_password = models.CharField(max_length=200) #пароль от домена
-#     ldap_server = models.CharField(max_length=200,unique=True) #в виде ldap://IP_or_Name
-#     ldap_base = models.CharField(max_length=200) # в виде dc=example, dc=local
-#     active = models.BooleanField(default='False',unique=False)
-#
-#     def __unicode__(self):
-#         return self.ldap_server+' '+self.ldap_user
-
 
 class Settings(models.Model):
     """ Настройки для синхронизации с AD.
