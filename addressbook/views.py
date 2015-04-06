@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import user_passes_test
 from addressbook.models import Contact
@@ -33,12 +33,13 @@ def user_can_edit(user):
 
 def search_contact(search_string):
     """
-    Поиск контактов. С sqlite не работает поиск без учета регистра. Ссылка на документацию: https://docs.djangoproject.com/en/dev/ref/databases/#sqlite-string-matching
+    Поиск контактов. С sqlite не работает поиск без учета регистра.
+    Ссылка на документацию: https://docs.djangoproject.com/en/dev/ref/databases/#sqlite-string-matching
     :param search_string:
     :return:
     """
-    return Contact.objects.filter(Q(lastname__icontains=search_string) | Q(firstname__icontains=search_string) | Q(
-        fathername__icontains=search_string))
+    return Contact.objects.filter(Q(lastname__icontains=search_string) |
+                                  Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string))
 
 
 def index(request):
@@ -57,8 +58,8 @@ def index(request):
     else:
         contacts_list = search_contact(search_string).order_by('lastname')
 
-    context = {'contacts_list': contacts_list, 'can_edit': user_can_edit(user), 'search_string': search_string,
-               'current_day': datetime.now()}
+    context = {'contacts_list': contacts_list, 'can_edit': user_can_edit(user),
+               'search_string': search_string, 'current_day': datetime.now()}
     return render(request, 'addressbook/index.html', context)
 
 
@@ -95,7 +96,7 @@ def delete(request, contact_id):
     """
     contact = get_object_or_404(Contact, pk=contact_id)
     contact.delete()
-    return HttpResponseRedirect(reverse('addressbook:index'))
+    return HttpResponseRedirect(reverse('addressbook: index'))
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
@@ -115,7 +116,7 @@ def editpost(request):
     :return:
     """
     contact_id = request.POST['id']
-    if contact_id <> "add_contact":
+    if contact_id != "add_contact":
         selected_contact = get_object_or_404(Contact, pk=contact_id)
     else:
         selected_contact = Contact()
@@ -131,7 +132,6 @@ def editpost(request):
     selected_contact.cellphone = request.POST['cellphone']
     selected_contact.address = request.POST['address']
     selected_contact.email = request.POST['email']
-    # selected_contact.photo = request.POST['lastname']
     if request.POST['birthday']:
         date_object = datetime.strptime(request.POST['birthday'], '%Y-%m-%d')
         selected_contact.birthday = date_object
@@ -141,114 +141,115 @@ def editpost(request):
     except:
         selected_contact.active = 0
     selected_contact.save()
-    return HttpResponseRedirect(reverse('addressbook:index'))
+    return HttpResponseRedirect(reverse('addressbook: index'))
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
-def ldap_sync(request):
+def ldap_sync():
     """Синхронизация с Active Directory"""
     l = ldap.initialize(settings("ldap_server"))
     try:
         l.protocol_version = ldap.VERSION3
         l.set_option(ldap.OPT_REFERRALS, 0)
-        bind = l.simple_bind_s(settings('ldap_user'), settings('ldap_password'))
+        l.simple_bind_s(settings('ldap_user'), settings('ldap_password'))
         base = settings('ldap_base')
-        # criteria = "(&(objectClass=user)(sAMAccountName=username))"
         criteria = "(&(mail=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(objectClass=user))"
-        attributes = ['sn', 'givenName', 'mail', 'telephoneNumber', 'mobile', 'l', 'streetAddress', 'department',
-                      'company', 'displayName', 'sAMAccountName', ]
+        attributes = ['sn', 'givenName', 'mail', 'telephoneNumber', 'mobile',
+                      'l', 'streetAddress', 'department', 'company', 'displayName', 'sAMAccountName']
         result = l.search_s(base, ldap.SCOPE_SUBTREE, criteria, attributes)
         results = [entry for dn, entry in result if isinstance(entry, dict)]
+
         for contact in results:
-            Llastname = ''
-            Llastname2 = ''
-            Lfirstname = ''
-            Lfirstname2 = ''
-            Lfathername = ''
-            Lcompany = ''
-            Lposition = ''
-            Ldepartment = ''
-            Lphone = ''
-            Lcellphone = ''
-            Laddress = ''
-            Lemail = ''
-            Llogin = ''
+            llastname = ''
+            llastname2 = ''
+            lfirstname = ''
+            lfirstname2 = ''
+            lfathername = ''
+            lcompany = ''
+            lposition = ''
+            ldepartment = ''
+            lphone = ''
+            lcellphone = ''
+            laddress = ''
+            lemail = ''
+            llogin = ''
+
             for key in contact.keys():
                 if key == 'sn':
-                    Llastname2 = contact[key][0]
+                    llastname2 = contact[key][0]
                 elif key == 'givenName':
-                    Lfirstname2 = contact[key][0]
+                    lfirstname2 = contact[key][0]
                 elif key == 'mail':
-                    Lemail = contact[key][0]
+                    lemail = contact[key][0]
                 elif key == 'telephoneNumber':
-                    Lphone = contact[key][0]
+                    lphone = contact[key][0]
                 elif key == 'mobile':
-                    Lcellphone = contact[key][0]
+                    lcellphone = contact[key][0]
                 elif key == 'l':
-                    Laddress = contact[key][0]
+                    laddress = contact[key][0]
                 elif key == 'streetAddress':
-                    Laddress = Laddress + ", " + contact[key][0]
+                    laddress =  laddress + ", " + contact[key][0]
                 elif key == 'department':
-                    Ldepartment = contact[key][0]
+                    ldepartment = contact[key][0]
                 elif key == 'company':
-                    Lcompany = contact[key][0]
+                    lcompany = contact[key][0]
                 elif key == 'sAMAccountName':
-                    Llogin = contact[key][0]
+                    llogin = contact[key][0]
                 elif key == 'displayName':
                     if len(contact[key][0].split()) == 3:
-                        Llastname, Lfirstname, Lfathername = contact[key][0].split()
+                        llastname, lfirstname, lfathername = contact[key][0].split()
                     elif len(contact[key][0].split()) == 2:
-                        Llastname, Lfirstname = contact[key][0].split()
+                        llastname, lfirstname = contact[key][0].split()
                     elif len(contact[key][0].split()) == 1:
-                        Llastname = contact[key][0]
+                        llastname = contact[key][0]
 
-                Llastname = Llastname if Llastname else Llastname2
-                Lfirstname = Lfirstname if Lfirstname else Lfirstname2
+                llastname = llastname if llastname else llastname2
+                lfirstname = lfirstname if lfirstname else lfirstname2
             try:
-                new_contact = Contact.objects.get(login=Llogin)
+                new_contact = Contact.objects.get(login=llogin)
             except:
                 new_contact = ""
             if not new_contact:
-                new_contact = Contact.objects.create(login=Llogin, lastname=Llastname, firstname=Lfirstname,
-                                                     fathername=Lfathername, company=Lcompany, position=Lposition,
-                                                     department=Ldepartment, phone=Lphone, cellphone=Lcellphone,
-                                                     address=Laddress, email=Lemail, active=True)
+                new_contact = Contact.objects.create(login=llogin, lastname=llastname, firstname=lfirstname,
+                                                     fathername=lfathername, company=lcompany, position=lposition,
+                                                     department=ldepartment, phone=lphone, cellphone=lcellphone,
+                                                     address=laddress, email=lemail, active=True)
                 new_contact.save()
             else:
                 changed = False
-                if new_contact.lastname <> Llastname:
-                    new_contact.lastname = Llastname
+                if new_contact.lastname != llastname:
+                    new_contact.lastname = llastname
                     changed = True
-                if new_contact.firstname <> Lfirstname:
-                    new_contact.firstname = Lfirstname
+                if new_contact.firstname != lfirstname:
+                    new_contact.firstname = lfirstname
                     changed = True
-                if new_contact.fathername <> Lfathername:
-                    new_contact.fathername = Lfathername
+                if new_contact.fathername != lfathername:
+                    new_contact.fathername = lfathername
                     changed = True
-                if new_contact.company <> Lcompany:
-                    new_contact.company = Lcompany
+                if new_contact.company != lcompany:
+                    new_contact.company = lcompany
                     changed = True
-                if new_contact.position <> Lposition:
-                    new_contact.position = Lposition
+                if new_contact.position != lposition:
+                    new_contact.position = lposition
                     changed = True
-                if new_contact.department <> Ldepartment:
-                    new_contact.department = Ldepartment
+                if new_contact.department != ldepartment:
+                    new_contact.department = ldepartment
                     changed = True
-                if new_contact.phone <> Lphone:
-                    new_contact.phone = Lphone
+                if new_contact.phone != lphone:
+                    new_contact.phone = lphone
                     changed = True
-                if new_contact.cellphone <> Lcellphone:
-                    new_contact.cellphone = Lcellphone
+                if new_contact.cellphone != lcellphone:
+                    new_contact.cellphone = lcellphone
                     changed = True
-                if new_contact.address <> Laddress:
-                    new_contact.address = Laddress
+                if new_contact.address != laddress:
+                    new_contact.address = laddress
                     changed = True
-                if new_contact.email <> Lemail:
-                    new_contact.email = Lemail
+                if new_contact.email != lemail:
+                    new_contact.email = lemail
                     changed = True
                 if changed:
                     new_contact.save()
 
     finally:
         l.unbind()
-    return HttpResponseRedirect(reverse('addressbook:index'))
+    return HttpResponseRedirect(reverse('addressbook: index'))
