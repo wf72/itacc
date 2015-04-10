@@ -152,7 +152,7 @@ def editpost(request):
     try:
         if request.POST['active'] == 'active':
             selected_contact.active = 1
-    except:
+    except Exception:
         selected_contact.active = 0
     selected_contact.save()
     return HttpResponseRedirect(reverse('addressbook: index'))
@@ -202,7 +202,7 @@ def ldap_sync():
                 elif key == 'l':
                     laddress = contact[key][0]
                 elif key == 'streetAddress':
-                    laddress =  laddress + ", " + contact[key][0]
+                    laddress = ", ".join([laddress, contact[key][0]])
                 elif key == 'department':
                     ldepartment = contact[key][0]
                 elif key == 'company':
@@ -221,7 +221,7 @@ def ldap_sync():
                 lfirstname = lfirstname if lfirstname else lfirstname2
             try:
                 new_contact = Contact.objects.get(login=llogin)
-            except:
+            except Exception:
                 new_contact = ""
             if not new_contact:
                 new_contact = Contact.objects.create(login=llogin, lastname=llastname, firstname=lfirstname,
