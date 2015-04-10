@@ -1,20 +1,23 @@
 # coding=utf-8
+from datetime import datetime
+import ldap
+
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Q
+
 from addressbook.models import Contact
 from addressbook.models import Settings
-from django.db.models import Q
-from datetime import datetime
-import ldap
 
 
 def settings(item):
     """
     Получение настроек
-    :param item:
+    :param item: ключ настроек
     :return:
+
     """
     if item:
         value = Settings.objects.get(key=item).value
@@ -27,6 +30,7 @@ def user_can_edit(user):
     Проверка на возможность редактирования
     :param user:
     :return:
+
     """
     return user.is_authenticated() and user.has_perm("addressbook.Contact")
 
@@ -37,6 +41,7 @@ def search_contact(search_string):
     Ссылка на документацию: https://docs.djangoproject.com/en/dev/ref/databases/#sqlite-string-matching
     :param search_string:
     :return:
+
     """
     return Contact.objects.filter(Q(lastname__icontains=search_string) |
                                   Q(firstname__icontains=search_string) | Q(fathername__icontains=search_string))
@@ -44,9 +49,10 @@ def search_contact(search_string):
 
 def index(request):
     """
-    Список контактов
+    Список всех контактов
     :param request:
     :return:
+
     """
     user = request.user
     if request.POST:
@@ -69,6 +75,7 @@ def detail(request, contact_id):
     :param request:
     :param contact_id:
     :return:
+
     """
     contact = get_object_or_404(Contact, pk=contact_id)
     return render(request, 'addressbook/detail.html', {'contact': contact})
@@ -81,6 +88,7 @@ def edit(request, contact_id):
     :param request:
     :param contact_id:
     :return:
+
     """
     contact = get_object_or_404(Contact, pk=contact_id)
     return render(request, 'addressbook/edit.html', {'contact': contact})
@@ -93,6 +101,7 @@ def delete(request, contact_id):
     :param request:
     :param contact_id:
     :return:
+
     """
     contact = get_object_or_404(Contact, pk=contact_id)
     contact.delete()
@@ -103,17 +112,22 @@ def delete(request, contact_id):
 def add(request):
     """
     Добавление нового контакта
+
     :param request:
     :return:
+
     """
     return render(request, 'addressbook/edit.html')
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def editpost(request):
-    """ Отправляет изменения контакта в базу
+    """
+    Отправляет изменения контакта в базу
+
     :param request:
     :return:
+
     """
     contact_id = request.POST['id']
     if contact_id != "add_contact":

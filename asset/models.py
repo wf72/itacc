@@ -5,108 +5,100 @@ from django.db import models
 
 
 class Partner(models.Model):
-    """
-    Производитель, поставщик или любое другое юридическое лицо
-    """
-    Name = models.CharField()
-    Address = models.CharField()
-    Phone = models.CharField(max_length=200, blank=True)
-    Email = models.EmailField(blank=True)
+    """ Производитель, поставщик или любое другое юридическое лицо """
+    name = models.CharField()
+    address = models.CharField()
+    phone = models.CharField(max_length=200, blank=True)
+    email = models.EmailField(blank=True)
 
     def __unicode__(self):
-        return self.Name
+        return self.name
 
 
 class DevTypes(models.Model):
-    """ Типы устройств
-    """
-    Name = models.CharField()
-    Manufacturer = models.ForeignKey('Manufacturer')
+    """ Типы устройств """
+    name = models.CharField()
+    manufacturer = models.ForeignKey('Manufacturer')
 
     def __unicode__(self):
-        return "%s %s" % (self.Manufacturer, self.Name)
+        return "%s %s" % (self.manufacturer, self.name)
 
 
 class Dev(models.Model):
-    """Устройства: компьютеры, принтеры и т.д."""
-    Name = models.CharField()
-    Type = models.ForeignKey(DevTypes)
-    Manufacturer = models.ForeignKey('Manufacturer')
-    SerialNumber = models.CharField(unique=True, blank=True)
-    InventoryNumber = models.CharField(unique=True)
-    WarrantyPeriod = models.DateField()
-    Cost = models.IntegerField(blank=True)
-    DatePurchase = models.DateField(blank=True)
+    """ Устройства: компьютеры, принтеры и т.д. """
+    name = models.CharField()
+    type = models.ForeignKey(DevTypes)
+    manufacturer = models.ForeignKey('Manufacturer')
+    serial_number = models.CharField(unique=True, blank=True)
+    inventory_number = models.CharField(unique=True)
+    warranty_period = models.DateField()
+    cost = models.IntegerField(blank=True)
+    date_purchase = models.DateField(blank=True)
 
     def __unicode__(self):
-        return "%s %s %s" % (self.Manufacturer, self.Name, self.InventoryNumber)
+        return "%s %s %s" % (self.manufacturer, self.name, self.inventory_number)
 
 
 class Soft(models.Model):
-    """Ленцзии на программы, лицензии на пользователя, сами программы и всё что с ними связано"""
-    Name = models.CharField()
-    Developer = models.CharField()
-    Validity = models.DateField(blank=True)
+    """ Ленцзии на программы, лицензии на пользователя, сами программы и всё что с ними связано """
+    name = models.CharField()
+    developer = models.CharField()
+    validity = models.DateField(blank=True)
 
     def __unicode__(self):
-        return "%s %s" % (self.Developer, self.Name)
+        return "%s %s" % (self.developer, self.name)
 
 
 class Supplie(models.Model):
-    """ Расходники: картриджи, бумага, тонер, ЗиПы, рекмпоплекты и т.д.
-    """
-    Name = models.CharField()
-    Type = models.ForeignKey('DevTypes')
-    PartNumber = models.CharField()
-    Manufacturer = models.ForeignKey('Manufacturer')
+    """ Расходники: картриджи, бумага, тонер, ЗиПы, рекмпоплекты и т.д. """
+    name = models.CharField()
+    type = models.ForeignKey('DevTypes')
+    part_number = models.CharField()
+    manufacturer = models.ForeignKey('Manufacturer')
 
     def __unicode__(self):
         return "%s %s" % (self.Manufacturer, self.Name)
 
 
 class User(models.Model):
-    """ Пользователи ИТ устройств компании
-    """
-    Person = models.OneToOneField('Contact')
-    Rights = models.ManyToManyField('UserRights')
-    Department = models.ForeignKey('Department')
+    """ Пользователи ИТ устройств компании """
+    person = models.OneToOneField('Contact')
+    rights = models.ManyToManyField('UserRights')
+    department = models.ForeignKey('Department')
 
     def __unicode__(self):
         return self.Person
 
 
 class UserRighst(models.Model):
-    """ Права доступа пользователей к чему либо
-    """
-    Name = models.CharField()
-    Value = models.CharField()
+    """ Права доступа пользователей к чему либо """
+    name = models.CharField()
+    value = models.CharField()
 
     def __unicode__(self):
         return "%s %s" % (self.Name, self.Value)
 
 
 class Storage(models.Model):
-    """ Место хранения
-    """
-    Name = models.CharField()
-    Address = models.TextField(max_length=300, blank=True)
-    User = models.ForeignKey('User')
+    """ Место хранения """
+    name = models.CharField()
+    address = models.TextField(max_length=300, blank=True)
+    user = models.ForeignKey('User')
 
 
 class Department(models.Model):
-    """ Отдел
-    """
-    Name = models.CharField()
-    Address = models.TextField(max_length=300, blank=True)
-    Responsibility = models.ForeignKey('User')
+    """ Отдел """
+    name = models.CharField()
+    address = models.TextField(max_length=300, blank=True)
+    responsibility = models.ForeignKey('User')
 
 
 class DevMovement(models.Model):
     """
     Движения устройств
     """
-    Devices = models.ManyToManyField('Department')
-    StorageSender = models.ForeignKey('Storage', blank=True)
-    StorageReceiver = models.ForeignKey('Storage')
-    Partner = models.ForeignKey('Partner', blank=True)
-    TransactionType = ['purchase', 'moving', 'utilization', 'obtaining']
+    devices = models.ManyToManyField('Department')
+    storage_sender = models.ForeignKey('Storage', blank=True)
+    storage_receiver = models.ForeignKey('Storage')
+    partner = models.ForeignKey('Partner', blank=True)
+    transaction_type = ['purchase', 'moving', 'utilization', 'obtaining']
