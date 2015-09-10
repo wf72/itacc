@@ -174,96 +174,46 @@ def ldap_sync():
         results = [entry for dn, entry in result if isinstance(entry, dict)]
 
         for contact in results:
-            llastname = ''
-            llastname2 = ''
-            lfirstname = ''
-            lfirstname2 = ''
-            lfathername = ''
-            lcompany = ''
-            lposition = ''
-            ldepartment = ''
-            lphone = ''
-            lcellphone = ''
-            laddress = ''
-            lemail = ''
-            llogin = ''
+            contact_data = {'lastname': '', 'lastname2': '', 'firstname': '', 'firstname2': '',
+                          'fathername': '', 'company': '', 'position': '', 'department': '',
+                          'phone': '', 'cellphone': '', 'address': '', 'email': ''}
+            contact_login = ''
 
             for key in contact.keys():
                 if key == 'sn':
-                    llastname2 = contact[key][0]
+                    contact_data['lastname2'] = contact[key][0]
                 elif key == 'givenName':
-                    lfirstname2 = contact[key][0]
+                    contact_data['firstname2'] = contact[key][0]
                 elif key == 'mail':
-                    lemail = contact[key][0]
+                    contact_data['email'] = contact[key][0]
                 elif key == 'telephoneNumber':
-                    lphone = contact[key][0]
+                    contact_data['phone'] = contact[key][0]
                 elif key == 'mobile':
-                    lcellphone = contact[key][0]
+                    contact_data['cellphone'] = contact[key][0]
                 elif key == 'l':
-                    laddress = contact[key][0]
+                    contact_data['address'] = contact[key][0]
                 elif key == 'streetAddress':
-                    laddress = ", ".join([laddress, contact[key][0]])
+                    contact_data['address'] = ", ".join([contact_data['address'], contact[key][0]])
                 elif key == 'department':
-                    ldepartment = contact[key][0]
+                    contact_data['department'] = contact[key][0]
                 elif key == 'company':
-                    lcompany = contact[key][0]
+                    contact_data['company'] = contact[key][0]
                 elif key == 'sAMAccountName':
-                    llogin = contact[key][0]
+                    contact_login = contact[key][0]
                 elif key == 'displayName':
                     if len(contact[key][0].split()) == 3:
-                        llastname, lfirstname, lfathername = contact[key][0].split()
+                        contact_data['lastname'], contact_data['firstname'], contact_data['fathername'] = contact[key][0].split()
                     elif len(contact[key][0].split()) == 2:
-                        llastname, lfirstname = contact[key][0].split()
+                        contact_data['lastname'], contact_data['firstname'] = contact[key][0].split()
                     elif len(contact[key][0].split()) == 1:
-                        llastname = contact[key][0]
+                        contact_data['lastname'] = contact[key][0]
 
-                llastname = llastname if llastname else llastname2
-                lfirstname = lfirstname if lfirstname else lfirstname2
+                contact_data['lastname'] = contact_data['lastname'] if contact_data['lastname'] else contact_data['lastname2']
+                contact_data['firstname'] = contact_data['firstname'] if contact_data['firstname'] else contact_data['firstname2']
             try:
-                new_contact = Contact.objects.get(login=llogin)
+                new_contact, created = Contact.objects.update_or_create(login=contact_login, defaults=contact_data)
             except Exception:
                 new_contact = ""
-            if not new_contact:
-                new_contact = Contact.objects.create(login=llogin, lastname=llastname, firstname=lfirstname,
-                                                     fathername=lfathername, company=lcompany, position=lposition,
-                                                     department=ldepartment, phone=lphone, cellphone=lcellphone,
-                                                     address=laddress, email=lemail, active=True)
-                new_contact.save()
-            else:
-                changed = False
-                if new_contact.lastname != llastname:
-                    new_contact.lastname = llastname
-                    changed = True
-                if new_contact.firstname != lfirstname:
-                    new_contact.firstname = lfirstname
-                    changed = True
-                if new_contact.fathername != lfathername:
-                    new_contact.fathername = lfathername
-                    changed = True
-                if new_contact.company != lcompany:
-                    new_contact.company = lcompany
-                    changed = True
-                if new_contact.position != lposition:
-                    new_contact.position = lposition
-                    changed = True
-                if new_contact.department != ldepartment:
-                    new_contact.department = ldepartment
-                    changed = True
-                if new_contact.phone != lphone:
-                    new_contact.phone = lphone
-                    changed = True
-                if new_contact.cellphone != lcellphone:
-                    new_contact.cellphone = lcellphone
-                    changed = True
-                if new_contact.address != laddress:
-                    new_contact.address = laddress
-                    changed = True
-                if new_contact.email != lemail:
-                    new_contact.email = lemail
-                    changed = True
-                if changed:
-                    new_contact.save()
-
     finally:
         l.unbind()
     return HttpResponseRedirect(reverse('addressbook: index'))
