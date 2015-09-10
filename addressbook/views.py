@@ -174,16 +174,16 @@ def ldap_sync():
         results = [entry for dn, entry in result if isinstance(entry, dict)]
 
         for contact in results:
-            contact_data = {'lastname': '', 'lastname2': '', 'firstname': '', 'firstname2': '',
-                          'fathername': '', 'company': '', 'position': '', 'department': '',
-                          'phone': '', 'cellphone': '', 'address': '', 'email': ''}
+            contact_data = {'lastname': '', 'firstname': '', 'fathername': '',
+                            'company': '', 'position': '', 'department': '',
+                            'phone': '', 'cellphone': '', 'address': '', 'email': ''}
             contact_login = ''
 
             for key in contact.keys():
                 if key == 'sn':
-                    contact_data['lastname2'] = contact[key][0]
+                    contact_data['lastname'] = contact[key][0]
                 elif key == 'givenName':
-                    contact_data['firstname2'] = contact[key][0]
+                    contact_data['firstname'] = contact[key][0]
                 elif key == 'mail':
                     contact_data['email'] = contact[key][0]
                 elif key == 'telephoneNumber':
@@ -208,8 +208,6 @@ def ldap_sync():
                     elif len(contact[key][0].split()) == 1:
                         contact_data['lastname'] = contact[key][0]
 
-                contact_data['lastname'] = contact_data['lastname'] if contact_data['lastname'] else contact_data['lastname2']
-                contact_data['firstname'] = contact_data['firstname'] if contact_data['firstname'] else contact_data['firstname2']
             try:
                 new_contact, created = Contact.objects.update_or_create(login=contact_login, defaults=contact_data)
             except Exception:
