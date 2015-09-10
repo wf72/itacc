@@ -181,7 +181,7 @@ def ldap_sync():
 
             for key in contact.keys():
                 if key == 'sn':
-                    contact_data['lastname'] = contact[key][0]
+                    contact_data['lastname2'] = contact[key][0]
                 elif key == 'givenName':
                     contact_data['firstname2'] = contact[key][0]
                 elif key == 'mail':
