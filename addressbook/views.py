@@ -178,6 +178,7 @@ def ldap_sync():
                             'company': '', 'position': '', 'department': '',
                             'phone': '', 'cellphone': '', 'address': '', 'email': ''}
             contact_login = ''
+            a = 0
 
             for key in contact.keys():
                 if key == 'sn':
