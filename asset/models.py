@@ -25,7 +25,7 @@ class DevTypes(models.Model):
 
 
 class Dev(models.Model):
-    """ Устройства: компьютеры, принтеры и т.д. """
+    """ Устройство: компьютеры, принтеры и т.д. """
     name = models.CharField()
     type = models.ForeignKey(DevTypes)
     manufacturer = models.ForeignKey('Manufacturer')
@@ -40,7 +40,7 @@ class Dev(models.Model):
 
 
 class Soft(models.Model):
-    """ Ленцзии на программы, лицензии на пользователя, сами программы и всё что с ними связано """
+    """ Лицензии на программы, лицензии на пользователя, сами программы и всё, что с ними связано """
     name = models.CharField()
     developer = models.CharField()
     validity = models.DateField(blank=True)
@@ -49,8 +49,8 @@ class Soft(models.Model):
         return "%s %s" % (self.developer, self.name)
 
 
-class Supplie(models.Model):
-    """ Расходники: картриджи, бумага, тонер, ЗиПы, рекмпоплекты и т.д. """
+class Supply(models.Model):
+    """ Расходник: картриджи, бумага, тонер, ЗиПы, ремкомплекты и т.д. """
     name = models.CharField()
     type = models.ForeignKey('DevTypes')
     part_number = models.CharField()
@@ -61,7 +61,7 @@ class Supplie(models.Model):
 
 
 class User(models.Model):
-    """ Пользователи ИТ устройств компании """
+    """ Пользователь ИТ устройств компании """
     person = models.OneToOneField('Contact')
     rights = models.ManyToManyField('UserRights')
     department = models.ForeignKey('Department')
@@ -70,8 +70,8 @@ class User(models.Model):
         return self.Person
 
 
-class UserRighst(models.Model):
-    """ Права доступа пользователей к чему либо """
+class UserRights(models.Model):
+    """ Права доступа пользователей к чему-либо """
     name = models.CharField()
     value = models.CharField()
 
@@ -95,7 +95,7 @@ class Department(models.Model):
 
 class DevMovement(models.Model):
     """
-    Движения устройств
+    Движение устройств
     """
     devices = models.ManyToManyField('Department')
     storage_sender = models.ForeignKey('Storage', blank=True)
