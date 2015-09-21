@@ -168,45 +168,32 @@ def ldap_sync():
         l.simple_bind_s(settings('ldap_user'), settings('ldap_password'))
         base = settings('ldap_base')
         criteria = "(&(mail=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(objectClass=user))"
-        attributes = ['sn', 'givenName', 'mail', 'telephoneNumber', 'mobile',
-                      'l', 'streetAddress', 'department', 'company', 'displayName', 'sAMAccountName']
-        result = l.search_s(base, ldap.SCOPE_SUBTREE, criteria, attributes)
+        attributes = {'sn': 'lastname', 'givenName': 'firstname', 'mail': 'email',
+                      'telephoneNumber': 'phone', 'mobile': 'cellphone',
+                      'l': 'address', 'streetAddress': 'address', 'department': 'department',
+                      'company': 'company', 'displayName': None, 'sAMAccountName': None}
+        result = l.search_s(base, ldap.SCOPE_SUBTREE, criteria, attributes.keys())
         results = [entry for dn, entry in result if isinstance(entry, dict)]
 
         for contact in results:
-            contact_data = {'lastname': '', 'firstname': '', 'fathername': '',
-                            'company': '', 'position': '', 'department': '',
-                            'phone': '', 'cellphone': '', 'address': '', 'email': ''}
+            contact_data = {}
             contact_login = ''
  
             for key in contact.keys():
-                if key == 'sn':
-                    contact_data['lastname'] = contact[key][0]
-                elif key == 'givenName':
-                    contact_data['firstname'] = contact[key][0]
-                elif key == 'mail':
-                    contact_data['email'] = contact[key][0]
-                elif key == 'telephoneNumber':
-                    contact_data['phone'] = contact[key][0]
-                elif key == 'mobile':
-                    contact_data['cellphone'] = contact[key][0]
-                elif key == 'l':
-                    contact_data['address'] = contact[key][0]
-                elif key == 'streetAddress':
+                if key in ('l', 'streetAddress'):
                     contact_data['address'] = ", ".join([contact_data['address'], contact[key][0]])
-                elif key == 'department':
-                    contact_data['department'] = contact[key][0]
-                elif key == 'company':
-                    contact_data['company'] = contact[key][0]
                 elif key == 'sAMAccountName':
                     contact_login = contact[key][0]
                 elif key == 'displayName':
-                    if len(contact[key][0].split()) == 3:
-                        contact_data['lastname'], contact_data['firstname'], contact_data['fathername'] = contact[key][0].split()
-                    elif len(contact[key][0].split()) == 2:
-                        contact_data['lastname'], contact_data['firstname'] = contact[key][0].split()
-                    elif len(contact[key][0].split()) == 1:
+                    splitted_name = contact[key][0].split()
+                    if len(splitted_name) == 3:
+                        contact_data['lastname'], contact_data['firstname'], contact_data['fathername'] = splitted_name
+                    elif len(splitted_name) == 2:
+                        contact_data['lastname'], contact_data['firstname'] = splitted_name
+                    elif len(splitted_name) == 1:
                         contact_data['lastname'] = contact[key][0]
+                else:
+                    contact_data[attributes[key]] = contact[key][0]
 
             try:
                 new_contact, created = Contact.objects.update_or_create(login=contact_login, defaults=contact_data)
