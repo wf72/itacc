@@ -181,7 +181,7 @@ def ldap_sync():
  
             for key in contact.keys():
                 if key in ('l', 'streetAddress'):
-                    contact_data['address'] = ", ".join([contact_data['address'], contact[key][0]])
+                    contact_data['address'] = ", ".join([contact_data.get('address', ''), contact[key][0]])
                 elif key == 'sAMAccountName':
                     contact_login = contact[key][0]
                 elif key == 'displayName':
