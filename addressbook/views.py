@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import user_passes_test
+
 from django.db.models import Q
 
 from addressbook.models import Contact
@@ -159,7 +160,7 @@ def editpost(request):
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
-def ldap_sync():
+def ldap_sync(request):
     """Синхронизация с Active Directory"""
     l = ldap.initialize(settings("ldap_server"))
     try:
