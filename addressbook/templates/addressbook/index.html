@@ -41,9 +41,10 @@
         <tr>
             <td>
                 {% if contact.active or can_edit %}
+
                 {% with birthday_month=contact.birthday|date:"m"|add:0 now_month=current_day|date:"m"|add:0
-                now_day=current_day|date:"d"|add:0 birthday_day=contact.birthday|date:"d"|add:0
-                now_day5=now_day|add:"5" %}
+                now_day=current_day|date:"d"|add:0 birthday_day=contact.birthday|date:"d"|add:0 now_day5=now_day|add:"5"
+                %}
 
                 {% if birthday_month == now_month and now_day|add:5 > birthday_day and now_day < birthday_day %}
                 Дней до дня рождения: {{ birthday_day|sub:now_day }}
@@ -51,12 +52,10 @@
                 {% if birthday_month == now_month and now_day == birthday_day %}
                 Сегодня День рождения!
                 {% endif %}
-
-                {% comment endwith %}
-                {% endcomment %}
+                {% endwith %}
             </td>
-            <td><a href="{% url 'addressbook:detail' contact.id %}">{{ contact.lastname }} {{ contact.firstname }} {{
-                contact.fathername}}</a></td>
+            <td><a href="{% url 'addressbook:detail' contact.id %}">{{ contact.lastname }} {{ contact.firstname }}
+                {{ contact.fathername }}</a></td>
             <td><a href="mailto:{{ contact.email}}">{{ contact.email}}</a></td>
             <td>
                 {% if contact.phone %}

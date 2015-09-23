@@ -2,10 +2,11 @@
 from datetime import datetime
 import ldap
 
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404, render, redirect
+
 from django.contrib.auth.decorators import user_passes_test
+
+from django.views.decorators.http import require_POST
 
 from django.db.models import Q
 
@@ -106,7 +107,7 @@ def delete(request, contact_id):
     """
     contact = get_object_or_404(Contact, pk=contact_id)
     contact.delete()
-    return HttpResponseRedirect(reverse('addressbook: index'))
+    return redirect('addressbook:index')
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
@@ -122,6 +123,7 @@ def add(request):
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
+@require_POST
 def editpost(request):
     """
     Отправляет изменения контакта в базу
@@ -156,7 +158,7 @@ def editpost(request):
     except Exception:
         selected_contact.active = 0
     selected_contact.save()
-    return HttpResponseRedirect(reverse('addressbook: index'))
+    return redirect('addressbook:index')
 
 
 @user_passes_test(user_can_edit, login_url="/login/")
@@ -202,4 +204,4 @@ def ldap_sync(request):
                 new_contact = ""
     finally:
         l.unbind()
-    return HttpResponseRedirect(reverse('addressbook: index'))
+    return redirect('addressbook:index')
