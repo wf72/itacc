@@ -3,7 +3,6 @@ from datetime import datetime
 import ldap
 
 from django.shortcuts import get_object_or_404, render, redirect
-
 from django.contrib.auth.decorators import user_passes_test
 
 from django.views.decorators.http import require_POST
@@ -174,7 +173,7 @@ def ldap_sync(request):
         attributes = {'sn': 'lastname', 'givenName': 'firstname', 'mail': 'email',
                       'telephoneNumber': 'phone', 'mobile': 'cellphone',
                       'l': 'address', 'streetAddress': 'address', 'department': 'department',
-                      'company': 'company', 'displayName': None, 'sAMAccountName': None}
+                      'company': 'company', 'displayName': None, 'sAMAccountName': 'login', 'title': 'position'}
         result = l.search_s(base, ldap.SCOPE_SUBTREE, criteria, attributes.keys())
         results = [entry for dn, entry in result if isinstance(entry, dict)]
 
