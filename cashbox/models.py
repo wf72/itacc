@@ -188,8 +188,8 @@ class CashboxPermission(models.Model):
     skladskie_operacii2 = models.BooleanField("Складские операции2", default=False)
 
     class Meta:
-        verbose_name = "Настройки правд доступа"
-        verbose_name_plural = "Настройки правд доступа"
+        verbose_name = "Настройки прав доступа"
+        verbose_name_plural = "Настройки прав доступа"
 
     def totext(self):
         return "~%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
