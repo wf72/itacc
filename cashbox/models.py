@@ -22,9 +22,9 @@ class CashBox(models.Model):
     """ Касса """
     name = models.CharField(max_length=30)
     shop = models.ForeignKey('Shop', blank=True)
-    file_base_path = models.CharField('ИмяФайлаСправочника', max_length=255)
-    file_report_path = models.CharField('ИмяФайлаОтчета', max_length=255)
-    file_flag_path = models.CharField(max_length=255, default=" ", verbose_name='ИмяФлагаЗагрузки')
+    file_base_path = models.CharField('ИмяФайлаСправочника', max_length=255, blank=True)
+    file_report_path = models.CharField('ИмяФайлаОтчета', max_length=255, blank=True)
+    file_flag_path = models.CharField(max_length=255, verbose_name='ИмяФлагаЗагрузки', blank=True)
     disabled = models.BooleanField(default=False)
     settings = models.ForeignKey('CashBoxSetting')  # настройки касс в виде текста
 
@@ -33,103 +33,106 @@ class CashBox(models.Model):
         verbose_name_plural = "Кассы"
 
     def __unicode__(self):
-        return "%s %s" % (self.shop, self.name)
+        return self.name
 
 
 class CashBoxSetting(models.Model):
-    name = models.CharField(max_length=30)
-    kkm_po_umolchaniyu = models.IntegerField('ККМПоУмолчанию', default=1)
-    sekcia_po_umolchaniyu = models.IntegerField('СекцияПоУмолчанию', default=1)
+    name = models.CharField(verbose_name=u'Имя кассы', max_length=30)
+    kkm_po_umolchaniyu = models.IntegerField(u'ККМПоУмолчанию', default=1)
+    sekcia_po_umolchaniyu = models.IntegerField(u'СекцияПоУмолчанию', default=1)
     zero = 0
     one = 1
     two = 2
     three = 3
     four = 4
     section_choices = (
-        (zero, 'Все регистрации в одну секцию'),
-        (one, 'Только при свободной цене'),
-        (two, 'Если не указана секция'),
-        (three, 'При каждой регистрации'),
-        (four, 'По свободной цене в одну секцию'),
+        (zero, u'Все регистрации в одну секцию'),
+        (one, u'Только при свободной цене'),
+        (two, u'Если не указана секция'),
+        (three, u'При каждой регистрации'),
+        (four, u'По свободной цене в одну секцию'),
     )
-    vibor_sekcii = models.SmallIntegerField(choices=section_choices, default=zero)
+    vibor_sekcii = models.SmallIntegerField(choices=section_choices, default=zero, verbose_name=u'ВыборСекции')
     # Вид чека
-    pechatat_imya_kassira = models.BooleanField('ПечататьИмяКассира', default=False)
-    pechatat_nomer_pozicii = models.BooleanField('ПечататьНумерациюПозиций', default=True)
-    pechatat_otstup = models.BooleanField('ПечататьОтступ', default=True)
-    odna_stroka_na_prodaju = models.BooleanField('ОднаСтрокаНаПРодажу', default=False)
-    pechatat_kredit_kartu = models.BooleanField('ПечататьКредитнуюКарту', default=False)
-    pechatat_poditog_pri_skidke_na_chek = models.BooleanField('ПечататьПодытогПриСкидкеНадбавкеНаЧек', default=False)
-    pechatat_imya_tovara = models.BooleanField('ПечататьНаименованиеТовара', default=True)
-    perenosit_imya_tovara = models.BooleanField('ПереноситьДлинныеНазванияТоваров', default=True)
-    pechatat_kod_tovara = models.BooleanField('ПечататьКодТовара', default=True)
-    pechatat_cifri_shk_tovara = models.BooleanField('ПечататьЦифрыШтрихКодаТовара', default=True)
-    pechatat_shk_ean = models.BooleanField('ПечататьШтрихКодЕАН', default=True)
-    pechatat_imya_skidok = models.BooleanField('ПечататьНазваниеСкидокНадбавок', default=True)
-    pechatat_razdelitel_mezhdu_prodaj = models.BooleanField('ПечататьРазделительМеждуПродажами', default=True)
+    pechatat_imya_kassira = models.BooleanField(u'ПечататьИмяКассира', default=False)
+    pechatat_nomer_pozicii = models.BooleanField(u'ПечататьНумерациюПозиций', default=True)
+    pechatat_otstup = models.BooleanField(u'ПечататьОтступ', default=True)
+    odna_stroka_na_prodaju = models.BooleanField(u'ОднаСтрокаНаПРодажу', default=False)
+    pechatat_kredit_kartu = models.BooleanField(u'ПечататьКредитнуюКарту', default=False)
+    pechatat_poditog_pri_skidke_na_chek = models.BooleanField(u'ПечататьПодытогПриСкидкеНадбавкеНаЧек', default=False)
+    pechatat_imya_tovara = models.BooleanField(u'ПечататьНаименованиеТовара', default=True)
+    perenosit_imya_tovara = models.BooleanField(u'ПереноситьДлинныеНазванияТоваров', default=True)
+    pechatat_kod_tovara = models.BooleanField(u'ПечататьКодТовара', default=True)
+    pechatat_cifri_shk_tovara = models.BooleanField(u'ПечататьЦифрыШтрихКодаТовара', default=True)
+    pechatat_shk_ean = models.BooleanField(u'ПечататьШтрихКодЕАН', default=True)
+    pechatat_imya_skidok = models.BooleanField(u'ПечататьНазваниеСкидокНадбавок', default=True)
+    pechatat_razdelitel_mezhdu_prodaj = models.BooleanField(u'ПечататьРазделительМеждуПродажами', default=True)
     # Режим 1
-    razreshit_block_mesta = models.BooleanField('РазрешитьБлокировкуРабочегоМеста', default=False)
-    razreshit_smenu_usera = models.BooleanField('РазрешитьСменуПользователяПриБлокировке', default=False)
-    avtorizaciya_posle_cheka = models.BooleanField('АвторизацияПослеКаждогоЧека', default=False)
-    vigruzhat_prodaji_pri_zotchete = models.BooleanField('ВыгружатьПродажиПриZОтчете', default=False)
-    prodavat_zvuk_pri_oshibke = models.BooleanField('ПодаватьНаККМЗвуковойСигналПриОшибке', default=False)
-    ignorirovat_tochku_v_kolichestve = models.BooleanField('ИгнорироватьТочкуВКоличестве', default=False)
-    ignorirovat_tochku_v_summe = models.BooleanField('ИгнорироватьТочкуВСумме', default=False)
-    sozdavat_tovari_pri_vozvrate = models.BooleanField('СоздаватьТоварыПриВозврате', default=False)
+    razreshit_block_mesta = models.BooleanField(u'РазрешитьБлокировкуРабочегоМеста', default=False)
+    razreshit_smenu_usera = models.BooleanField(u'РазрешитьСменуПользователяПриБлокировке', default=False)
+    avtorizaciya_posle_cheka = models.BooleanField(u'АвторизацияПослеКаждогоЧека', default=False)
+    vigruzhat_prodaji_pri_zotchete = models.BooleanField(u'ВыгружатьПродажиПриZОтчете', default=False)
+    prodavat_zvuk_pri_oshibke = models.BooleanField(u'ПодаватьНаККМЗвуковойСигналПриОшибке', default=False)
+    ignorirovat_tochku_v_kolichestve = models.BooleanField(u'ИгнорироватьТочкуВКоличестве', default=False)
+    ignorirovat_tochku_v_summe = models.BooleanField(u'ИгнорироватьТочкуВСумме', default=False)
+    sozdavat_tovari_pri_vozvrate = models.BooleanField(u'СоздаватьТоварыПриВозврате', default=False)
     # Режим 2
-    zapretit_prodaji_v_0 = models.BooleanField('ЗапретитьПродажиПоНулевойЦене', default=False)
-    zapretit_oplatu_bez_vvoda_summi = models.BooleanField('ЗапретитьОплатуБезВводаСуммы', default=False)
-    kontrol_prodaji_drobnogo_kolichestva = models.BooleanField('КонтрольПродажиДробногоКоличества', default=False)
-    zapretit_otricatelnie_ostatki = models.BooleanField('ЗапретитьОтрицательныеОстатки', default=False)
-    dopolnyat_shk_do_13 = models.BooleanField('ДополнятьШтрихКодНулямиДо13Знаков', default=True)
-    vibirat_edinicu_pri_registracii = models.BooleanField('ВыбиратьЕдиницуПриРегистрацииПоКоду', default=False)
-    zaprashivat_kolichestvo_pri_podbore = models.BooleanField('ЗапрашиватьКоличествоПриПодборе', default=False)
-    razdelyat_triadi = models.BooleanField('РазделятьТриады', default=True)
-    zapretit_vvod_kolichestva = models.BooleanField('ЗапретитьВводКоличества', default=False)
+    zapretit_prodaji_v_0 = models.BooleanField(u'ЗапретитьПродажиПоНулевойЦене', default=False)
+    zapretit_oplatu_bez_vvoda_summi = models.BooleanField(u'ЗапретитьОплатуБезВводаСуммы', default=False)
+    kontrol_prodaji_drobnogo_kolichestva = models.BooleanField(u'КонтрольПродажиДробногоКоличества', default=False)
+    zapretit_otricatelnie_ostatki = models.BooleanField(u'ЗапретитьОтрицательныеОстатки', default=False)
+    dopolnyat_shk_do_13 = models.BooleanField(u'ДополнятьШтрихКодНулямиДо13Знаков', default=True)
+    vibirat_edinicu_pri_registracii = models.BooleanField(u'ВыбиратьЕдиницуПриРегистрацииПоКоду', default=False)
+    zaprashivat_kolichestvo_pri_podbore = models.BooleanField(u'ЗапрашиватьКоличествоПриПодборе', default=False)
+    razdelyat_triadi = models.BooleanField(u'РазделятьТриады', default=True)
+    zapretit_vvod_kolichestva = models.BooleanField(u'ЗапретитьВводКоличества', default=False)
     # Режим 3
-    razreshit_prodaju_po_svobodnoy_cene = models.BooleanField('РазрешитьПродажуПоСвободнойЦене', default=True)
-    zapretit_zakritie_nulevogo_cheka = models.BooleanField('ЗапретитьЗакрытиеНулевогоЧека', default=False)
+    razreshit_prodaju_po_svobodnoy_cene = models.BooleanField(u'РазрешитьПродажуПоСвободнойЦене', default=True)
+    zapretit_zakritie_nulevogo_cheka = models.BooleanField(u'ЗапретитьЗакрытиеНулевогоЧека', default=False)
     # Дополнительные
-    razreshit_vid_oplata_2 = models.BooleanField('РазрешитьВидОплаты2', default=False)
-    name_vid_oplata_2 = models.CharField('НазваниеВидаОплаты2', max_length=30, blank=True)
-    razreshit_vid_oplata_3 = models.BooleanField('РазрешитьВидОплаты3', default=False)
-    name_vid_oplata_3 = models.CharField('НазваниеВидаОплаты3', max_length=30, blank=True)
-    razreshit_vid_oplata_4 = models.BooleanField('РазрешитьВидОплаты4', default=False)
-    name_vid_oplata_4 = models.CharField('НазваниеВидаОплаты4', max_length=30, blank=True)
-    pechatat_shk_cheka = models.BooleanField('ПечататьШтрихКодЧека', default=False)
-    prefiks_shk_cheka = models.CharField('ПрефиксШтрихКодаЧека', max_length=10, blank=True)
+    razreshit_vid_oplata_2 = models.BooleanField(u'РазрешитьВидОплаты2', default=False)
+    name_vid_oplata_2 = models.CharField(u'НазваниеВидаОплаты2', max_length=30, blank=True)
+    razreshit_vid_oplata_3 = models.BooleanField(u'РазрешитьВидОплаты3', default=False)
+    name_vid_oplata_3 = models.CharField(u'НазваниеВидаОплаты3', max_length=30, blank=True)
+    razreshit_vid_oplata_4 = models.BooleanField(u'РазрешитьВидОплаты4', default=False)
+    name_vid_oplata_4 = models.CharField(u'НазваниеВидаОплаты4', max_length=30, blank=True)
+    pechatat_shk_cheka = models.BooleanField(u'ПечататьШтрихКодЧека', default=False)
+    prefiks_shk_cheka = models.CharField(u'ПрефиксШтрихКодаЧека', max_length=10, blank=True)
     card_choices = (
-        (zero, 'Не выбирать'),
-        (one, 'Наличными'),
-        (two, 'Типом оплаты 2'),
-        (three, 'Типом оплаты 3'),
-        (four, 'Типом оплаты 4'),
+        (zero, u'Не выбирать'),
+        (one, u'Наличными'),
+        (two, u'Типом оплаты 2'),
+        (three, u'Типом оплаты 3'),
+        (four, u'Типом оплаты 4'),
     )
-    vibor_platej_karti_pri_oplate = models.SmallIntegerField(verbose_name='ВыборПлатежнойКартыПриОплате',
+    vibor_platej_karti_pri_oplate = models.SmallIntegerField(verbose_name=u'ВыборПлатежнойКартыПриОплате',
                                                              choices=card_choices, default=one)
-    # Обмен
-    sposob_obmena_dannimi = models.IntegerField('СпособОбменаДанными', default=0)
-    vremya_vozobnovleniya_svyazi = models.IntegerField('ВремяВозобновленияСвязи', default=0)
-    avtomaticheskaya_zagruzka = models.BooleanField('АвтоматическаяЗагрузка', default=False)
-    avtomaticheskaya_vigruzka = models.BooleanField('АвтоматическаяВыгрузка', default=False)
-    imya_flaga_zagruzki = models.CharField(max_length=255, default=" ", verbose_name='ИмяФлагаЗагрузки')
-    imya_flaga_vigruzki = models.CharField('ИмяФлагаВыгрузки', max_length=255, default=" ")
-    imya_fayla_spravochnika = models.CharField('ИмяФайлаСправочника', max_length=255, default=" ")
-    imya_fayla_otcheta = models.CharField('ИмяФайлаОтчета', max_length=255, default=" ")
-    zapros_rekvizitov = models.BooleanField('ЗапросРеквизитов', default=" ")
-    imya_fayla_zaprosa_rekvizitov = models.CharField('ИмяФайлаЗапросаРеквизитов', max_length=255, default=" ")
-    imya_fayla_vigruzki_rekvizitov = models.CharField('ИмяФайлаВыгрузкиРеквизитов', max_length=255, default=" ")
 
     class Meta:
-        verbose_name = "Настройки кассы"
-        verbose_name_plural = "Настройки касс"
+        verbose_name = u"Настройки кассы"
+        verbose_name_plural = u"Настройки касс"
+
+    def totext(self):
+        """
+        возможность выгружать константы-настройки в следующем формате:
+|<ИмяКонстанты>=<Значение>
+где <ИмяКонстанты> - идентификатор константы-настройки, как задан в конфигураторе
+(знакозависим), <Значение> - значение данной константы.
+        :return:
+        """
+        text = ""
+        for field in self._meta.fields:
+            if not field.name in ['name', 'id']:
+                text += "|%(name)s=%(value)s\n" % {'name': unicode(field.verbose_name), 'value': unicode('1' if getattr(self, field.name) and type(True)==type(getattr(self, field.name)) else '0')}
+        return text
+
 
     def __unicode__(self):
         return self.name
 
 
 class CashboxPermission(models.Model):
-    name = models.CharField('Название набора прав', max_length=30)
+    name = models.CharField(u'Название набора прав', max_length=30)
     vvod_koda_v_prodaje = models.BooleanField("Ввод кода в чеке продажи", default=False)
     schitivanie_shk_skanerom_v_prodaje = models.BooleanField("Считывание ШК сканером в чеке продажи", default=False)
     vvod_shk_vruchnuyu_v_prodaje = models.BooleanField("Ввод ШК вручную в чеке продажи", default=False)
@@ -188,16 +191,16 @@ class CashboxPermission(models.Model):
     skladskie_operacii2 = models.BooleanField("Складские операции2", default=False)
 
     class Meta:
-        verbose_name = "Настройки прав доступа"
-        verbose_name_plural = "Настройки прав доступа"
+        verbose_name = "Настройки прав на кассах"
+        verbose_name_plural = "Настройки прав на кассах"
 
     def totext(self):
         return "~%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
                "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
                "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
-               "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" %\
+               "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\n" %\
                (self.id,
-                self.name,
+                unicode(self.name),
                 '', '', '', '',
                 int(self.vvod_koda_v_prodaje),
                 int(self.schitivanie_shk_skanerom_v_prodaje),
@@ -294,7 +297,7 @@ class User(models.Model):
     """ Пользователи """
     name = models.CharField(max_length=30)
     cashbox_permission = models.ForeignKey('CashboxPermission', verbose_name='Набор прав доступа')
-    passwd = models.CharField(max_length=30)
+    passwd = models.CharField(max_length=30, blank=True, null=True)
     cashbox = models.ManyToManyField('CashBox', blank=True)
     disabled = models.BooleanField(default=False)
 
@@ -307,10 +310,10 @@ class User(models.Model):
 
     def usertotext(self):
 
-        return '&%(id)s;%(name)s;%(permission_id)s;%(passwd)s;%(ico)s;%(card)s' % \
+        return '&%(id)s;%(name)s;%(permission_id)s;%(passwd)s;%(ico)s;%(card)s\n' % \
                {'id': self.id,
-                'name': self.name,
-                'permission_id': self.group.id,
+                'name': unicode(self.name),
+                'permission_id': self.cashbox_permission.id,
                 'passwd': self.passwd,
                 'ico': '',
                 'card': ''}

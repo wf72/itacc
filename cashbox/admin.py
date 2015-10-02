@@ -2,23 +2,22 @@ from django.contrib import admin
 
 from cashbox.models import CashBoxSetting, CashBox, CashboxPermission, Shop, User
 
-
-# Register your models here.
-
 class CashBoxSettingAdmin(admin.ModelAdmin):
-    pass
+    save_as = True
 
 class CashBoxAdmin(admin.ModelAdmin):
-    pass
+    save_as = True
 
 class CashboxPermissionAdmin(admin.ModelAdmin):
-    pass
+    save_as = True
 
 class ShopAdmin(admin.ModelAdmin):
     pass
 
 class UserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'cashbox_permission')
+    list_filter = ['cashbox',]
+    search_fields = ('name', 'cashbox')
 
 admin.site.register(CashBoxSetting, CashBoxSettingAdmin)
 admin.site.register(CashBox, CashBoxAdmin)

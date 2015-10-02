@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% block content %}
+
+    {% if cashbox_list %}
+
+
+
+
+    <table border="0" align="center" cellspacing="0" about="asd">
+        <caption>Кассы</caption>
+        <tr>
+            <th>Имя</th>
+            <th>Адрес магазина</th>
+            <th>
+            </th>
+        </tr>
+
+        {% for cashbox in cashbox_list %}
+<form action="{% url 'cashbox:rendersettings' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="id" id="id" value="{{ cashbox.id }}">
+        <tr>
+            <td>{{ cashbox.name }}</td>
+            <td>{{ cashbox.shop.address }}</td>
+            <td> <input type="checkbox" name="users" value="users" checked>Пользователи</td>
+                <td><input type="checkbox" name="settings" value="settings">Настройки
+            </td>
+            <td>
+                <input type="submit" value="Генерировать настройки"/>
+            </td>
+        </tr>
+    </form>
+        {% endfor %}
+
+
+    </table>
+
+
+    {% else %}
+    <div><p>пусто.</p></div>
+    {% endif %}
+
+    {% endblock content %}
