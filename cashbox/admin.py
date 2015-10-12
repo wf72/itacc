@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cashbox.models import CashBoxSetting, CashBox, CashboxPermission, Shop, User
+from cashbox.models import CashBoxSetting, CashBox, CashboxPermission, Shop, User, BarcodeTemplate
 
 class CashBoxSettingAdmin(admin.ModelAdmin):
     save_as = True
@@ -14,6 +14,9 @@ class CashboxPermissionAdmin(admin.ModelAdmin):
 class ShopAdmin(admin.ModelAdmin):
     pass
 
+class BarcodeTemplateAdmin(admin.ModelAdmin):
+    pass
+
 class UserAdmin(admin.ModelAdmin):
     list_display = ('name', 'cashbox_permission')
     list_filter = ['cashbox',]
@@ -24,3 +27,4 @@ admin.site.register(CashBox, CashBoxAdmin)
 admin.site.register(CashboxPermission, CashboxPermissionAdmin)
 admin.site.register(Shop, ShopAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(BarcodeTemplate, BarcodeTemplateAdmin)

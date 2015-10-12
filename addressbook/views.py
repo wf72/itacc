@@ -4,9 +4,7 @@ import ldap
 
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import user_passes_test
-
 from django.views.decorators.http import require_POST
-
 from django.db.models import Q
 
 from addressbook.models import Contact
@@ -131,7 +129,7 @@ def editpost(request):
     :return:
 
     """
-    contact_id = request.POST['id']
+    contact_id = request.POST.get['id']
     if contact_id != "add_contact":
         selected_contact = get_object_or_404(Contact, pk=contact_id)
     else:
@@ -148,13 +146,12 @@ def editpost(request):
     selected_contact.cellphone = request.POST['cellphone']
     selected_contact.address = request.POST['address']
     selected_contact.email = request.POST['email']
-    if request.POST['birthday']:
+    if request.POST.get['birthday']:
         date_object = datetime.strptime(request.POST['birthday'], '%Y-%m-%d')
         selected_contact.birthday = date_object
-    try:
-        if request.POST['active'] == 'active':
-            selected_contact.active = 1
-    except Exception:
+    if request.POST.get['active'] == 'active':
+        selected_contact.active = 1
+    else:
         selected_contact.active = 0
     selected_contact.save()
     return redirect('addressbook:index')

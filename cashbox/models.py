@@ -36,6 +36,68 @@ class CashBox(models.Model):
         return self.name
 
 
+class BarcodeTemplate(models.Model):
+    prefix = models.CharField(verbose_name=u'Префикс штрих-кода', max_length=2, default='20')
+    a0 = 0
+    a1 = 1
+    a2 = 2
+    a3 = 3
+    a4 = 4
+    a5 = 5
+    a6 = 6
+    a7 = 7
+    a8 = 8
+    a9 = 9
+    a10 = 10
+    a11 = 11
+    barcode_format_choises = (
+        (a0, u'Сначала вес, затем код'),
+        (a1, u'Сначала код, затем вес'),
+        (a2, u'Сначала вес, потом цена'),
+        (a3, u'Сначала цена, потом вес'),
+        (a4, u'Сначала код, потом цена'),
+        (a5, u'Сначала цена, потом код'),
+        (a6, u'Служебный'),
+        (a7, u'Вес + артикул'),
+        (a8, u'Артикул + вес'),
+        (a9, u'Вес + штрих-код'),
+        (a10, u'Штрих-код + вес'),
+        (a11, u'Регистрация по штрих-коду + вес берется с весов'),
+    )
+    barcode_format = models.SmallIntegerField(choices=barcode_format_choises, default=a1, verbose_name=u'Выбор шаблона')
+    code_length = models.SmallIntegerField(verbose_name=u'Число знаков первого поля', default=6)
+    weight_ratio = models.FloatField(verbose_name=u'Коэффициент веса', default=0.001)
+    price_multiplier = models.FloatField(verbose_name=u'Множитель цены', default=0)
+    search_by_barcode = models.BooleanField(verbose_name=u'Поик по штрих-коду', default=False)
+    complement_to_ean13 = models.BooleanField(verbose_name=u'Дополнять до 13 символов', default=False)
+
+    class Meta:
+        verbose_name = "Шаблон штрих-кода"
+        verbose_name_plural = "Шаблоны штрих-кодов"
+
+    def __unicode__(self):
+        format_dict = [
+            ['M', 'T'],
+            ['T', 'M'],
+            # ['M', 'T'], найти остальные обозначения
+            ]
+        format_barcode = self.barcode_format_choises[self.barcode_format][1]
+
+        return "%(prefix)s + %(format)s" % {'prefix': self.prefix, 'format': format_barcode}
+
+    def totext(self):
+        return "(%(prefix)s;%(barcode_format)s;%(code_length)s;%(weight_ratio)s;" \
+               "%(price_multiplier)s;%(search_by_barcode)s;%(complement_to_ean13)s\n" % {
+            'prefix': self.prefix,
+            'barcode_format': self.barcode_format,
+            'code_length': self.code_length,
+            'weight_ratio': self.weight_ratio,
+            'price_multiplier': self.price_multiplier,
+            'search_by_barcode': int(self.search_by_barcode),
+            'complement_to_ean13': int(self.complement_to_ean13)
+        }
+
+
 class CashBoxSetting(models.Model):
     name = models.CharField(verbose_name=u'Имя кассы', max_length=30)
     kkm_po_umolchaniyu = models.IntegerField(u'ККМПоУмолчанию', default=1)
@@ -107,6 +169,7 @@ class CashBoxSetting(models.Model):
     )
     vibor_platej_karti_pri_oplate = models.SmallIntegerField(verbose_name=u'ВыборПлатежнойКартыПриОплате',
                                                              choices=card_choices, default=one)
+    barcode_template = models.ManyToManyField('BarcodeTemplate',verbose_name='Весовые штрих-коды')
 
     class Meta:
         verbose_name = u"Настройки кассы"
@@ -121,11 +184,13 @@ class CashBoxSetting(models.Model):
         :return:
         """
         text = ""
-        for field in self._meta.fields:
-            if not field.name in ['name', 'id']:
-                text += "|%(name)s=%(value)s\n" % {'name': unicode(field.verbose_name), 'value': unicode('1' if getattr(self, field.name) and type(True)==type(getattr(self, field.name)) else '0')}
-        return text
+        for template in self.barcode_template.all():
+            text += template.totext()
 
+        for field in self._meta.fields:
+            if field.name not in ['name', 'id']:
+                text += "|%(name)s=%(value)s\n" % {'name': unicode(field.verbose_name), 'value': unicode('1' if getattr(self, field.name) and isinstance(getattr(self, field.name), bool) else '0')}
+        return text
 
     def __unicode__(self):
         return self.name
@@ -317,4 +382,3 @@ class User(models.Model):
                 'passwd': self.passwd,
                 'ico': '',
                 'card': ''}
-
