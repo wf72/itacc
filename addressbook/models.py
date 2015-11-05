@@ -5,7 +5,7 @@ from django.db import models
 class Contact(models.Model):
     """ Контакты
     """
-    login = models.CharField(max_length=30, unique=True)
+    login = models.CharField(max_length=40, unique=True)
     lastname = models.CharField(max_length=200)
     firstname = models.CharField(max_length=200)
     fathername = models.CharField(max_length=200, blank=True)

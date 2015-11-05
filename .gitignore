@@ -1,2 +1,7 @@
+/asset/migrations
+/migrations
+/addressbook/migrations
+/cashbox/migrations
+/itacc/settings.py
 db.sqlite3
 auth.py
