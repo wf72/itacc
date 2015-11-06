@@ -189,7 +189,7 @@ class CashBoxSetting(models.Model):
 
         for field in self._meta.fields:
             if field.name not in ['name', 'id']:
-                text += "|%(name)s=%(value)s\n" % {'name': unicode(field.verbose_name), 'value': unicode('1' if getattr(self, field.name) and isinstance(getattr(self, field.name), bool) else '0')}
+                text += "|%(name)s=%(value)s\n" % {'name': unicode(field.verbose_name), 'value': unicode(int(getattr(self, field.name)) if isinstance(getattr(self, field.name), bool) else getattr(self, field.name))}
         return text
 
     def __unicode__(self):

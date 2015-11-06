@@ -39,10 +39,10 @@ def rendersettings(request):
 '''
     textfile1 = ''
     textfile2 = ''
-    textfile_bottom = '$$$CLR {NO_TOV}'
+    textfile_bottom = '$$$ADD'
 
     if request.POST.get('users'):
-        textfile_bottom += ' {USR} {NAB_P}'
+        textfile_bottom = '$$$CLR{NO_TOV}{USR}{NAB_P}'
         users = User.objects.filter(cashbox=cb).exclude(disabled = 1)
         cashbox_permissions = set([ user.cashbox_permission for user in users ])
         for item in cashbox_permissions:
@@ -54,10 +54,11 @@ def rendersettings(request):
 
     if textfile1 or textfile2:
         result = unicode(textfile_header)
-    if textfile1:
-        result += unicode(textfile1)
-    if textfile2:
-        result += unicode(textfile2)
+        if textfile1:
+            result += unicode(textfile1)
+        if textfile2:
+            result += unicode(textfile2)
+        result += unicode(textfile_bottom)
 
     if len(result.splitlines()) > 2:
         response = HttpResponse(content_type='text/plain')
