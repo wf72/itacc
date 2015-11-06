@@ -1,11 +1,11 @@
 # coding=utf-8
-from datetime import datetime
 import ldap
+from datetime import datetime
 
-from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import user_passes_test
-from django.views.decorators.http import require_POST
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views.decorators.http import require_POST
 
 from addressbook.models import Contact
 from addressbook.models import Settings
@@ -55,7 +55,7 @@ def index(request):
     """
     user = request.user
     if request.POST:
-        search_string = request.POST['search_string']
+        search_string = request.POST.get('search_string')
     else:
         search_string = ""
     if search_string == "":
@@ -129,30 +129,30 @@ def editpost(request):
     :return:
 
     """
-    contact_id = request.POST.get['id']
+    contact_id = request.POST.get('id')
     if contact_id != "add_contact":
         selected_contact = get_object_or_404(Contact, pk=contact_id)
     else:
         selected_contact = Contact()
         selected_contact.pk = None
 
-    selected_contact.lastname = request.POST['lastname']
-    selected_contact.firstname = request.POST['firstname']
-    selected_contact.fathername = request.POST['fathername']
-    selected_contact.company = request.POST['company']
-    selected_contact.position = request.POST['position']
-    selected_contact.department = request.POST['department']
-    selected_contact.phone = request.POST['phone']
-    selected_contact.cellphone = request.POST['cellphone']
-    selected_contact.address = request.POST['address']
-    selected_contact.email = request.POST['email']
-    if request.POST.get['birthday']:
-        date_object = datetime.strptime(request.POST['birthday'], '%Y-%m-%d')
+    selected_contact.lastname = request.POST.get('lastname')
+    selected_contact.firstname = request.POST.get('firstname')
+    selected_contact.fathername = request.POST.get('fathername')
+    selected_contact.company = request.POST.get('company')
+    selected_contact.position = request.POST.get('position')
+    selected_contact.department = request.POST.get('department')
+    selected_contact.phone = request.POST.get('phone')
+    selected_contact.cellphone = request.POST.get('cellphone')
+    selected_contact.address = request.POST.get('address')
+    selected_contact.email = request.POST.get('email')
+    if request.POST.get('birthday'):
+        date_object = datetime.strptime(request.POST.get('birthday'), '%Y-%m-%d')
         selected_contact.birthday = date_object
-    if request.POST.get['active'] == 'active':
-        selected_contact.active = 1
+    if request.POST.get('active'):
+        selected_contact.active = True
     else:
-        selected_contact.active = 0
+        selected_contact.active = False
     selected_contact.save()
     return redirect('addressbook:index')
 

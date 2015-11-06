@@ -30,7 +30,7 @@ def index(request):
 @user_passes_test(user_can_edit, login_url="/login/")
 @require_POST
 def rendersettings(request):
-    cashbox_id = request.POST.get['id']
+    cashbox_id = request.POST.get('id')
     cb = get_object_or_404(CashBox, pk=cashbox_id)
     file_base_path = cb.file_base_path if cb.file_base_path else 'base.txt'
     # file_flag_path = cb.file_flag_path if cb.file_flag_path else 'flag.txt'    # как передать два фала в одном ответе?

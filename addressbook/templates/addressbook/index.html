@@ -57,13 +57,13 @@
             <td><a href="mailto:{{ contact.email}}">{{ contact.email}}</a></td>
             <td>
                 {% if contact.phone %}
-                {{ contact.phone }}
+                    {{ contact.phone }}
                 {% endif %}
                 {% if contact.phone and contact.cellphone %}
-                ,
+                    ,
                 {% endif %}
                 {% if contact.cellphone %}
-                {{ contact.cellphone }}
+                    {{ contact.cellphone }}
                 {% endif %}
             </td>
             <td><a href="{% url 'addressbook:detail' contact.id %}"> Подробнее </a></td>
