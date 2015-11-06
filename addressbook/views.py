@@ -155,7 +155,7 @@ def editpost(request):
         selected_contact.active = False
     selected_contact.save()
     return redirect('addressbook:index')
-#
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
 def ldap_sync(request):
