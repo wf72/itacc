@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block auth %}
+{% endblock auth %}
+{% block content %}
+
+    {% if users %}
+
+
+
+
+    <table border="0" align="center" cellspacing="0" about="asd">
+        <caption><b>Пользователи</b></caption>
+        <tr>
+            <th>Имя</th>
+            <th>Права</th>
+            <th>Пароль</th>
+        </tr>
+
+        {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.cashbox_permission.name }}</td>
+            <td>{{ user.passwd }}</td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+
+
+    {% else %}
+    <div><p>пусто.</p></div>
+    {% endif %}
+
+{% endblock content %}

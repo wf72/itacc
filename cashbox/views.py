@@ -1,6 +1,6 @@
 # coding=utf-8
-from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.views.decorators.http import require_POST
 
 from cashbox.models import User, CashBox
@@ -23,15 +23,17 @@ def index(request):
     :param request:
     :return:
     """
-    cashbox_list = CashBox.objects.order_by('name')
+    cashbox_list = CashBox.objects.order_by('name').exclude(disabled = 1)
     context = {'cashbox_list': cashbox_list}
     return render(request, 'index.html', context)
 
 @user_passes_test(user_can_edit, login_url="/login/")
 @require_POST
 def rendersettings(request):
-    cashbox_id = request.POST['id']
+    cashbox_id = request.POST.get['id']
     cb = get_object_or_404(CashBox, pk=cashbox_id)
+    file_base_path = cb.file_base_path if cb.file_base_path else 'base.txt'
+    # file_flag_path = cb.file_flag_path if cb.file_flag_path else 'flag.txt'    # как передать два фала в одном ответе?
     textfile_header = '''##@@&&
 #
 '''
@@ -59,8 +61,16 @@ def rendersettings(request):
 
     if len(result.splitlines()) > 2:
         response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename="cb_settings.txt"'
+        response['Content-Disposition'] = 'attachment; filename="%s"' % file_base_path
         response.write(result)
         return response
     else:
         return redirect('cashbox:index')
+
+
+@user_passes_test(user_can_edit, login_url="/login/")
+def cashbox_users(request, cashbox_id):
+    cb = get_object_or_404(CashBox, pk=cashbox_id)
+    users = User.objects.filter(cashbox=cb).exclude(disabled = 1).exclude(name = 'Администратор')
+    context = {'users': users}
+    return render(request, 'cashbox_users.html', context)

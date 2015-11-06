@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load mathfilters %}
 {% block content %}
 
     {% if cashbox_list %}
@@ -29,6 +28,7 @@
             <td>
                 <input type="submit" value="Генерировать настройки"/>
             </td>
+            <td><a href="{% url 'cashbox:cashbox_users' cashbox.id %}">Список пользователей</a> </td>
         </tr>
     </form>
         {% endfor %}
