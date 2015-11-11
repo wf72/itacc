@@ -63,7 +63,7 @@ def rendersettings(request):
     if len(result.splitlines()) > 2:
         response = HttpResponse(content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="%s"' % file_base_path
-        response.write(result)
+        response.write(result.decode('utf-8').encode('cp1251'))
         return response
     else:
         return redirect('cashbox:index')
