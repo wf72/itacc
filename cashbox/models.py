@@ -87,7 +87,7 @@ class BarcodeTemplate(models.Model):
 
     def totext(self):
         return "(%(prefix)s;%(barcode_format)s;%(code_length)s;%(weight_ratio)s;" \
-               "%(price_multiplier)s;%(search_by_barcode)s;%(complement_to_ean13)s\x0a" % {
+               "%(price_multiplier)s;%(search_by_barcode)s;%(complement_to_ean13)s\r\n" % {
             'prefix': self.prefix,
             'barcode_format': self.barcode_format,
             'code_length': self.code_length,
@@ -189,7 +189,7 @@ class CashBoxSetting(models.Model):
 
         for field in self._meta.fields:
             if field.name not in ['name', 'id']:
-                text += "|%(name)s=%(value)s\x0a" % {'name': unicode(field.verbose_name), 'value': unicode(int(getattr(self, field.name)) if isinstance(getattr(self, field.name), bool) else getattr(self, field.name))}
+                text += "|%(name)s=%(value)s\r\n" % {'name': unicode(field.verbose_name), 'value': unicode(int(getattr(self, field.name)) if isinstance(getattr(self, field.name), bool) else getattr(self, field.name))}
         return text
 
     def __unicode__(self):
@@ -263,7 +263,7 @@ class CashboxPermission(models.Model):
         return "~%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
                "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
                "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;" \
-               "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\x0a" %\
+               "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\r\n" %\
                (self.id,
                 unicode(self.name),
                 '', '', '', '',
@@ -375,7 +375,7 @@ class User(models.Model):
 
     def usertotext(self):
 
-        return '&%(id)s;%(name)s;%(permission_id)s;%(passwd)s;%(ico)s;%(card)s\x0a' % \
+        return '&%(id)s;%(name)s;%(permission_id)s;%(passwd)s;%(ico)s;%(card)s\r\n' % \
                {'id': self.id,
                 'name': unicode(self.name),
                 'permission_id': self.cashbox_permission.id,
