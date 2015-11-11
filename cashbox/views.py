@@ -34,9 +34,7 @@ def rendersettings(request):
     cb = get_object_or_404(CashBox, pk=cashbox_id)
     file_base_path = cb.file_base_path if cb.file_base_path else 'base.txt'
     # file_flag_path = cb.file_flag_path if cb.file_flag_path else 'flag.txt'    # как передать два фала в одном ответе?
-    textfile_header = '''##@@&&
-#
-'''
+    textfile_header = '''##@@&&\r\n#\r\n'''
     textfile1 = ''
     textfile2 = ''
     textfile_bottom = '$$$ADD'
