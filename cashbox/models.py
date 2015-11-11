@@ -369,7 +369,7 @@ class User(models.Model):
         (one, u'pink flower.bmp'),
         (two, u'butterfly.bmp'),
     )
-    picture = models.CharField(verbose_name=u'Картинка пользователя', choices=picture_choices, default=one
+    picture = models.CharField(verbose_name=u'Картинка пользователя', choices=picture_choices, default=one,
                                max_length=30)
     cashbox_permission = models.ForeignKey('CashboxPermission', verbose_name='Набор прав доступа')
     passwd = models.CharField(max_length=30, blank=True, null=True)
