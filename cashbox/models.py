@@ -361,6 +361,15 @@ class CashboxPermission(models.Model):
 class User(models.Model):
     """ Пользователи """
     name = models.CharField(max_length=30)
+    zero = u'astronaut.bmp'
+    one = u'pink flower.bmp'
+    two = u'butterfly.bmp'
+    picture_choices = (
+        (zero, u'astronaut.bmp'),
+        (one, u'pink flower.bmp'),
+        (two, u'butterfly.bmp'),
+    )
+    picture = models.CharField(verbose_name=u'Картинка пользователя', choices=picture_choices, default=one)
     cashbox_permission = models.ForeignKey('CashboxPermission', verbose_name='Набор прав доступа')
     passwd = models.CharField(max_length=30, blank=True, null=True)
     cashbox = models.ManyToManyField('CashBox', blank=True)
@@ -380,5 +389,5 @@ class User(models.Model):
                 'name': unicode(self.name),
                 'permission_id': self.cashbox_permission.id,
                 'passwd': self.passwd,
-                'ico': '',
+                'ico': self.picture,
                 'card': ''}
