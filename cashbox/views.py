@@ -89,7 +89,7 @@ def check_result(request):
     if form.is_valid():
         transactions = {'numbers': 0, }
         temp_file = request.FILES['file']
-        for chunk in temp_file.chunks()
+        for chunk in temp_file.chunks():
             for line in chunk:
                 if len(line.split(';')) > 1:
 
