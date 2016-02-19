@@ -2,7 +2,6 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.views.decorators.http import require_POST
-from .forms import UploadFileForm
 
 from cashbox.models import User, CashBox
 #from django.core.files.uploadhandler import TemporaryFileUploadHandler
@@ -81,17 +80,17 @@ def cashbox_users(request, cashbox_id):
     context = {'users': users}
     return render(request, 'cashbox_users.html', context)
 
-
-@require_POST
-def check_result(request):
-
-    form = UploadFileForm(request.POST, request.FILES)
-    if form.is_valid():
-        transactions = {'numbers': 0, }
-        temp_file = request.FILES['file']
-        for chunk in temp_file.chunks():
-            for line in chunk:
-                if len(line.split(';')) > 1:
-
+#
+# @require_POST
+# def check_result(request):
+#
+#     form = UploadFileForm(request.POST, request.FILES)
+#     if form.is_valid():
+#         transactions = {'numbers': 0, }
+#         temp_file = request.FILES['file']
+#         for chunk in temp_file.chunks():
+#             for line in chunk:
+#                 if len(line.split(';')) > 1:
+#
 
 
