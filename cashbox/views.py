@@ -2,9 +2,15 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.views.decorators.http import require_POST
+from .forms import UploadFileForm
 
 from cashbox.models import User, CashBox
+#from django.core.files.uploadhandler import TemporaryFileUploadHandler
+from django import forms
 
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    file  = forms.FileField()
 
 def user_can_edit(user):
     """
@@ -23,9 +29,10 @@ def index(request):
     :param request:
     :return:
     """
-    cashbox_list = CashBox.objects.order_by('name').exclude(disabled = 1)
+    cashbox_list = CashBox.objects.order_by('name').exclude(disabled=1)
     context = {'cashbox_list': cashbox_list}
     return render(request, 'index.html', context)
+
 
 @user_passes_test(user_can_edit, login_url="/login/")
 @require_POST
@@ -41,8 +48,8 @@ def rendersettings(request):
 
     if request.POST.get('users'):
         textfile_bottom = '$$$CLR{NO_TOV}{USR}{NAB_P}'
-        users = User.objects.filter(cashbox=cb).exclude(disabled = 1)
-        cashbox_permissions = set([ user.cashbox_permission for user in users ])
+        users = User.objects.filter(cashbox=cb).exclude(disabled=1)
+        cashbox_permissions = set([user.cashbox_permission for user in users])
         for item in cashbox_permissions:
             textfile1 += item.totext()
         for user in users:
@@ -58,11 +65,11 @@ def rendersettings(request):
             result += unicode(textfile2)
         result += unicode(textfile_bottom)
 
-    if len(result.splitlines()) > 2:
-        response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % file_base_path
-        response.write(result.encode('cp1251'))
-        return response
+        if len(result.splitlines()) > 2:
+            response = HttpResponse(content_type='text/plain')
+            response['Content-Disposition'] = 'attachment; filename="%s"' % file_base_path
+            response.write(result.encode('cp1251'))
+            return response
     else:
         return redirect('cashbox:index')
 
@@ -70,6 +77,21 @@ def rendersettings(request):
 @user_passes_test(user_can_edit, login_url="/login/")
 def cashbox_users(request, cashbox_id):
     cb = get_object_or_404(CashBox, pk=cashbox_id)
-    users = User.objects.filter(cashbox=cb).exclude(disabled = 1).exclude(name = 'Администратор')
+    users = User.objects.filter(cashbox=cb).exclude(disabled=1).exclude(name='Администратор')
     context = {'users': users}
     return render(request, 'cashbox_users.html', context)
+
+
+@require_POST
+def check_result(request):
+
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        transactions = {'numbers': 0, }
+        temp_file = request.FILES['file']
+        for chunk in temp_file.chunks()
+            for line in chunk:
+                if len(line.split(';')) > 1:
+
+
+

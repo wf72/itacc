@@ -206,12 +206,14 @@ class CashboxPermission(models.Model):
     storno_v_prodaje = models.BooleanField("Сторно в чеке продажи", default=False)
     redaktirovat_kolichestvo = models.BooleanField("Редактировать количество", default=False)
     redaktirovat_cenu = models.BooleanField("Редактировать цену", default=False)
+    vvod_checka_vozvrat = models.BooleanField("Ввод чека возврат", default=False)
     vozvrat_po_nomeru_cheka = models.BooleanField("Возврат по номеру чека", default=False)
     vvod_koda_v_vozvrate = models.BooleanField("Ввод кода в чеке возврата", default=False)
     schitivanie_shk_skanerom_v_vozvrate = models.BooleanField("Считывание ШК сканером в чеке возврата", default=False)
     vvod_shk_vruchnuyu_v_vozvrate = models.BooleanField("Ввод ШК вручную в чеке возврата", default=False)
     vizualniy_podbor_v_vozvrate = models.BooleanField("Через визуальный подбор в чеке возврата", default=False)
     svobodnaya_cena_v_vozvrate = models.BooleanField("По свободной цене в чеке возврата", default=False)
+    vozvrat_v_cheke_prodaji = models.BooleanField("Возврат в чеке продажи", default=False)
     procent_skidka_na_poziciyu = models.BooleanField("Процентная скидка на позицию", default=False)
     procent_nadbavka_na_poziciyu = models.BooleanField("Процентная надбавка на позицию", default=False)
     summovaya_skidka_na_poziciyu = models.BooleanField("Суммовая скидка на позицию", default=False)
@@ -275,14 +277,14 @@ class CashboxPermission(models.Model):
                 int(self.storno_v_prodaje),
                 int(self.redaktirovat_kolichestvo),
                 int(self.redaktirovat_cenu),
-                '',
+                int(self,vvod_checka_vozvrat),
                 int(self.vozvrat_po_nomeru_cheka),
                 int(self.vvod_koda_v_vozvrate),
                 int(self.schitivanie_shk_skanerom_v_vozvrate),
                 int(self.vvod_shk_vruchnuyu_v_vozvrate),
                 int(self.vizualniy_podbor_v_vozvrate),
                 int(self.svobodnaya_cena_v_vozvrate),
-                '',
+                int(self.vozvrat_v_cheke_prodaji),
                 int(self.procent_skidka_na_poziciyu),
                 int(self.procent_nadbavka_na_poziciyu),
                 int(self.summovaya_skidka_na_poziciyu),
@@ -337,9 +339,9 @@ class CashboxPermission(models.Model):
         try:
             self.id, self.name, n, n, n, n, self.vvod_koda_v_prodaje, self.schitivanie_shk_skanerom_v_prodaje, \
             self.vvod_shk_vruchnuyu_v_prodaje, self.vizualniy_podbor_v_prodaje, self.svobodnaya_cena_v_prodaje, \
-            self.storno_v_prodaje, self.redaktirovat_kolichestvo, self.redaktirovat_cenu, n, \
+            self.storno_v_prodaje, self.redaktirovat_kolichestvo, self.redaktirovat_cenu, self,vvod_checka_vozvrat, \
             self.vozvrat_po_nomeru_cheka, self.vvod_koda_v_vozvrate, self.schitivanie_shk_skanerom_v_vozvrate, \
-            self.vvod_shk_vruchnuyu_v_vozvrate, self.vizualniy_podbor_v_vozvrate, self.svobodnaya_cena_v_vozvrate, n, \
+            self.vvod_shk_vruchnuyu_v_vozvrate, self.vizualniy_podbor_v_vozvrate, self.svobodnaya_cena_v_vozvrate, self.vozvrat_v_cheke_prodaji, \
             self.procent_skidka_na_poziciyu, self.procent_nadbavka_na_poziciyu, self.summovaya_skidka_na_poziciyu, \
             self.summovaya_nadbavka_na_poziciyu, self.procent_skidka_na_chek, self.procent_nadbavka_na_chek, \
             self.summovaya_skidka_na_chek, self.summovaya_nadbavka_na_chek, self.fiksirovannie_skidki_nadbavki, \
