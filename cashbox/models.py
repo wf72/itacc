@@ -277,7 +277,7 @@ class CashboxPermission(models.Model):
                 int(self.storno_v_prodaje),
                 int(self.redaktirovat_kolichestvo),
                 int(self.redaktirovat_cenu),
-                int(self,vvod_checka_vozvrat),
+                int(self.vvod_checka_vozvrat),
                 int(self.vozvrat_po_nomeru_cheka),
                 int(self.vvod_koda_v_vozvrate),
                 int(self.schitivanie_shk_skanerom_v_vozvrate),
